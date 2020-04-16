@@ -1,0 +1,234 @@
+/*
+Green River College Website Colors
+
+green: #2c882b
+orange: #d14900
+gray: #525252
+
+*/
+
+body{
+    background-color: #fff;
+    color: #000000;
+}
+
+.chartStyle{
+    background-color: #fff;
+}
+
+#myChart{
+    padding-top: 10px;
+    padding-right: 10px;
+    height: 300px !important;
+    width: 600px !important;
+    border: solid 1px #2c882b;
+}
+
+.infoTab{
+    color: #000;
+}
+
+.btn-color{
+    background-color: #2c882b;
+    color: #fff;
+}
+
+.btn-color:hover{
+    background-color: #525252;
+    color: #ffffff;
+}
+
+.station-style{
+    background-color: #ffed0d;
+    border: solid 1px #000;
+    height: 10px;
+    width: 10px;
+    position: absolute;
+    z-index: 5;
+}
+
+
+.mapStyle{
+    background-image: url("../../assets/images/map52.png");
+    height: 600px;
+    width: 600px;
+    z-index: -1;
+    border: solid 1px #2c882b;
+    user-select: none;
+    box-sizing: border-box;
+
+}
+.windowSize{
+    height: 599px;
+    width: 599px;
+}
+.selected{
+    border: 1px solid #000;
+    background-color: #ff21e5;
+}
+#map-pane{
+    /*position: absolute;*/
+}
+
+
+/***** Grid Overlay CSS *****/
+
+.gridStyle {
+    /*background-image:*/
+            /*linear-gradient(*/
+                    /*90deg,*/
+                    /*rgb(248, 250, 249) 1px,*/
+                    /*transparent 0*/
+            /*),*/
+            /*linear-gradient(*/
+                    /*180deg,*/
+                    /*rgb(243, 249, 250) 1px,*/
+                    /*transparent 0*/
+            /*),*/
+            /*linear-gradient(*/
+                    /*90deg,*/
+                    /*rgba(250, 244, 245, 0.3) 1px,*/
+                    /*transparent 0*/
+            /*),*/
+            /*linear-gradient(*/
+                    /*180deg,*/
+                    /*rgba(250, 246, 250, 0.3) 1px,*/
+                    /*transparent 0*/
+            /*);*/
+    /*background-size:*/
+            /*50px, 100% 50px,*/
+            /*10px, 100% 10px;*/
+    pointer-events: none;
+    background-image: url("../../assets/images/lad_long_overlay.png");
+}
+#rangeCircleDiv{
+    position: relative;
+}
+
+
+/***** Circle CSS *****/
+
+.circle{
+    border-radius: 50%;
+    z-index: 1;
+    border: #ffffff solid 2px;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.line{
+    background-color: #ffffff;
+    height: 2px;
+    position: absolute;
+    z-index: 2;
+}
+
+.circleSize{
+    color: #000;
+    user-select: none;
+    position: absolute;
+    z-index: 3;
+    font-weight: bolder;
+    background-color: rgba(255, 255, 255, 0.51);
+    border-radius: 5px;
+}
+
+/*** Solve CSS ***/
+
+#solve-for{
+    position: relative;
+}
+
+.solveCircleStyle{
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.65);
+    background-color: rgba(136, 204, 238, 0.61);
+    pointer-events: none;
+    z-index: 7;
+}
+#message{
+    position: absolute;
+    top: 250px;
+    left: 200px;
+    width: 250px;
+    height: 100px;
+    z-index: 8;
+    background-color: rgba(255, 255, 255, 0.76);
+    border-radius: 3px;
+    padding: 10px 5px 10px 5px;
+}
+
+.mapPointer{
+    cursor: crosshair;
+}
+
+
+/* Hide HTML5 Up and Down arrows. */
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/*** Measuring Tool ***/
+#stationGraph{
+    width: 600px;
+    height: 300px;
+    user-select: none;
+}
+#toolBox{
+    width: 600px;
+    height: 300px;
+    user-select: none;
+    position: absolute;
+}
+#timeTool{
+    border-left: solid 1px #2c882b;
+    border-right: solid 1px #2c882b;
+    background-color: rgba(44, 136, 43, 0.16);
+    position: absolute;
+    height: inherit;
+    pointer-events: none;
+    z-index: 1;
+    box-sizing: border-box;
+}
+#ampTool{
+    border-top: solid 1px rgba(255, 130, 0, 0.51);
+    border-bottom: solid 1px rgba(255, 130, 0, 0.51);
+    background-color: rgba(255, 130, 0, 0.1);
+    position: absolute;
+    pointer-events: none;
+    width: inherit;
+    overflow: inherit;
+    z-index: 1;
+    box-sizing: border-box;
+}
+
+#timeText{
+    position: absolute;
+    left: 250px;
+    top: 5px;
+    z-index: 2;
+    color: #2c882b;
+    background-color: rgba(255, 255, 255, 0.65);
+    padding: 3px;
+    border-radius: 3px;
+}
+
+#ampText{
+    position: absolute;
+    left: 315px;
+    top: 5px;
+    z-index: 2;
+    color: #d14900;
+    background-color: rgba(255, 255, 255, 0.65);
+    padding: 3px;
+    border-radius: 3px;
+
+}
