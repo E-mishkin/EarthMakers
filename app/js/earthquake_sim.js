@@ -1,5 +1,5 @@
 /*
-    Author:     Nicholas Perez(neperez23@gmail.com)
+    Authors:     Nicholas Perez(neperez23@gmail.com), Robert Cox
     Date:       3/14/2020
     Version:    1.0
     Green River College Seismic Simulating Earthquakes.
