@@ -27,7 +27,8 @@ let ctx = document.getElementById("myChart");
 let myChart = makeChart([]);
 let selected = '';
 
-
+let choiceX;
+let choiceY;
 
 /* RANDOM GEN NUMBERS */
 
@@ -108,9 +109,27 @@ function init() {
         getRandomIntInclusive(MAX_EARTHQUAKE_DURATION)+10);
     let stationPool = createStations(NUMBER_OF_STATIONS, STATION_POS, earthquake);
     let rangeTools = generateRangeToolParts(stationPool);
+    console.log(earthquake);
+    //solveEpicenter(earthquake);
+    document.getElementById('solveBtn').addEventListener('click', (e)=>{
+        //let messageBox = document.getElementById('message');
+        //let solverDiv = document.getElementById('solverDiv');
 
-    solveEpicenter(earthquake);
+        if(Math.abs((choiceX-PADDING_COMPENSATION) - earthquake.x) < 13 &&
+            Math.abs((choiceY-PADDING_COMPENSATION) - earthquake.y) < 13) {
+            alert("Good job!\n" +
+                "Your choice: x = " + (choiceX-PADDING_COMPENSATION) +", y = "+ (choiceY-PADDING_COMPENSATION) +"\n" +
+                "Actual location: x = " + earthquake.x+", y = "+earthquake.y);
+        } else {
+            alert("Try again!\n" +
+                "Your choice: x = " + (choiceX-PADDING_COMPENSATION) +", y = "+ (choiceY-PADDING_COMPENSATION) +"\n" +
+                "Actual location: x = " + earthquake.x+", y = "+earthquake.y);
+            document.getElementById('plotEpi').click();
+        }
 
+        console.log("Choice: " + (choiceX-PADDING_COMPENSATION) +", "+ (choiceY-PADDING_COMPENSATION));
+        console.log("Actual:" + earthquake.x+", "+earthquake.y);
+    });
     //plot items
     plotItems(stationPool, document.getElementById('stationsDiv'));
     plotItems(rangeTools, document.getElementById('rangeCircleDiv'));
@@ -122,7 +141,7 @@ function init() {
     addSelectedEvent(stationPool);
 
 
-    console.log(earthquake);
+
     // console.log(stationPool);
 }
 
@@ -180,15 +199,7 @@ function generateRangeToolParts(stations) {
 //checks if the user has selected the right location for the earthquake
 function solveEpicenter(earthquake) {
 
-    document.getElementById('solveBtn').addEventListener('click', (e)=>{
-        //let messageBox = document.getElementById('message');
-        let solverDiv = document.getElementById('solverDiv');
 
-
-
-        console.log(compareX);
-
-    });
 }
 
 
@@ -411,6 +422,9 @@ document.getElementById('map-pane').addEventListener('click', (event) =>{
         solver = document.createElement('div');
 
         solver.id = 'solverDiv';
+
+        choiceX = event.x;
+        choiceY = event.y;
 
         solver.style.top = event.y-CENTER_BUFFER+'px';
         solver.style.left = event.x-CENTER_BUFFER+'px';
