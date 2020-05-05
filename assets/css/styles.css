@@ -10,6 +10,7 @@ gray: #525252
 body{
     background-color: #fff;
     color: #000000;
+    font-family: 'Overpass', sans-serif;
 }
 
 .chartStyle{
@@ -53,7 +54,7 @@ body{
     height: 600px;
     width: 600px;
     z-index: -1;
-    border: solid 1px #2c882b;
+    border: solid 3px #2c882b;
     user-select: none;
     box-sizing: border-box;
 
