@@ -50,7 +50,7 @@ body{
 
 
 .mapStyle{
-    background-image: url("../../assets/images/map52.png");
+    background-image: url("../images/map52.png");
     height: 600px;
     width: 600px;
     z-index: -1;
@@ -76,31 +76,31 @@ body{
 
 .gridStyle {
     /*background-image:*/
-            /*linear-gradient(*/
-                    /*90deg,*/
-                    /*rgb(248, 250, 249) 1px,*/
-                    /*transparent 0*/
-            /*),*/
-            /*linear-gradient(*/
-                    /*180deg,*/
-                    /*rgb(243, 249, 250) 1px,*/
-                    /*transparent 0*/
-            /*),*/
-            /*linear-gradient(*/
-                    /*90deg,*/
-                    /*rgba(250, 244, 245, 0.3) 1px,*/
-                    /*transparent 0*/
-            /*),*/
-            /*linear-gradient(*/
-                    /*180deg,*/
-                    /*rgba(250, 246, 250, 0.3) 1px,*/
-                    /*transparent 0*/
-            /*);*/
+    /*linear-gradient(*/
+    /*90deg,*/
+    /*rgb(248, 250, 249) 1px,*/
+    /*transparent 0*/
+    /*),*/
+    /*linear-gradient(*/
+    /*180deg,*/
+    /*rgb(243, 249, 250) 1px,*/
+    /*transparent 0*/
+    /*),*/
+    /*linear-gradient(*/
+    /*90deg,*/
+    /*rgba(250, 244, 245, 0.3) 1px,*/
+    /*transparent 0*/
+    /*),*/
+    /*linear-gradient(*/
+    /*180deg,*/
+    /*rgba(250, 246, 250, 0.3) 1px,*/
+    /*transparent 0*/
+    /*);*/
     /*background-size:*/
-            /*50px, 100% 50px,*/
-            /*10px, 100% 10px;*/
+    /*50px, 100% 50px,*/
+    /*10px, 100% 10px;*/
     pointer-events: none;
-    background-image: url("../../assets/images/lad_long_overlay.png");
+    background-image: url("../images/lad_long_overlay.png");
 }
 #rangeCircleDiv{
     position: relative;

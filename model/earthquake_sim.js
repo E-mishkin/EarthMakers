@@ -4,12 +4,12 @@
     Version:    1.0
     Green River College Seismic Simulating Earthquakes.
  */
- 
- /*
-	To whomever takes up this project I would love to know the outcome of where you take it. 
-	My email is listed above but anyone at GR Software Dev. teachers/staff has my contact info.
-	Goodluck!! 
- */
+
+/*
+   To whomever takes up this project I would love to know the outcome of where you take it.
+   My email is listed above but anyone at GR Software Dev. teachers/staff has my contact info.
+   Goodluck!!
+*/
 
 const PADDING_COMPENSATION = 15;
 const EARTHQUAKE_RANGE = 40;
