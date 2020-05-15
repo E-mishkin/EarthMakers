@@ -1,5 +1,5 @@
 /*
-    Authors:     Nicholas Perez(neperez23@gmail.com), Robert Cox *branch test*
+    Authors:     Nicholas Perez(neperez23@gmail.com), Robert Cox
     Date:       3/14/2020
     Version:    1.0
     Green River College Seismic Simulating Earthquakes.
@@ -116,18 +116,18 @@ function init() {
         //let solverDiv = document.getElementById('solverDiv');
 
         if(Math.abs((choiceX-PADDING_COMPENSATION) - earthquake.x) < 13 &&
-            Math.abs((choiceY-PADDING_COMPENSATION) - earthquake.y) < 13) {
+            Math.abs((choiceY-PADDING_COMPENSATION-65) - earthquake.y) < 13) {
             alert("Good job!\n" +
-                "Your choice: x = " + (choiceX-PADDING_COMPENSATION) +", y = "+ (choiceY-PADDING_COMPENSATION) +"\n" +
+                "Your choice: x = " + (choiceX-PADDING_COMPENSATION) +", y = "+ (choiceY-PADDING_COMPENSATION-65) +"\n" +
                 "Actual location: x = " + earthquake.x+", y = "+earthquake.y);
         } else {
             alert("Try again!\n" +
-                "Your choice: x = " + (choiceX-PADDING_COMPENSATION) +", y = "+ (choiceY-PADDING_COMPENSATION) +"\n" +
+                "Your choice: x = " + (choiceX-PADDING_COMPENSATION) +", y = "+ (choiceY-PADDING_COMPENSATION-65) +"\n" +
                 "Actual location: x = " + earthquake.x+", y = "+earthquake.y);
             document.getElementById('plotEpi').click();
         }
 
-        console.log("Choice: " + (choiceX-PADDING_COMPENSATION) +", "+ (choiceY-PADDING_COMPENSATION));
+        console.log("Choice: " + (choiceX-PADDING_COMPENSATION) +", "+ (choiceY-PADDING_COMPENSATION)-65);
         console.log("Actual:" + earthquake.x+", "+earthquake.y);
     });
     //plot items
@@ -442,16 +442,39 @@ document.getElementById('notePadBtn').addEventListener('click', () =>{
 });
 
 //Amp and time tool for the graphs
-document.getElementById('stationGraph').addEventListener('click', (event)=>{
-    timeAmpTool();
+/*document.getElementById('stationGraph').addEventListener('click', (event)=>{
+    timeAmpTool(event, "");
+});*/
+
+let timeHandler = (event)=>{
+    timeAmpTool(event, "time");
+}
+
+let ampHandler = (event)=>{
+    timeAmpTool(event, "amp");
+}
+
+document.getElementById('time').addEventListener('click', ()=>{
+   /* document.getElementById('stationGraph').removeEventListener('click', (event)=>{
+        timeAmpTool(event, "");
+    });*/
+    document.getElementById('stationGraph').removeEventListener('click', ampHandler);
+    document.getElementById('stationGraph').addEventListener('click', timeHandler);
 });
 
+document.getElementById('amp').addEventListener('click', ()=>{
 
+    /*document.getElementById('stationGraph').removeEventListener('click', (event)=>{
+        timeAmpTool(event, "");
+    });*/
+    document.getElementById('stationGraph').removeEventListener('click', timeHandler);
+    document.getElementById('stationGraph').addEventListener('click', ampHandler);
+});
 
 /* TIME / AMP TOOL */
 
 //Time and Amp tool... its a mess... fix this asap
-function timeAmpTool() {
+function timeAmpTool(event, listener) {
     const leftTimeBuffer = 31;
     const rightTimeBuffer = 582;
     const midpoint = 129;
@@ -461,23 +484,21 @@ function timeAmpTool() {
 
 
     //uses the mouse click even as well as keyboard button presses to dictate which tool is being used
-    if(event.ctrlKey){
+    if(listener === "amp"){
         ampToolUpdate(ampTool,event, midpoint);
-    }
-    else if(event.altKey){
-        timeToolUpdate(timeTool, event, rightTimeBuffer);
-    }
-    else{
         //sets amp tool to the mid
         if(isNaN(getStyleNumber(ampTool, 'height'))){
             ampTool.style.top = midpoint+'px';
         }
+    }
+    else if(listener === "time"){
+        //
         //sets time line at clicked point
         if(event.offsetX <= leftTimeBuffer){
             timeTool.style.left = leftTimeBuffer+'px';
         }
         else if(event.offsetX >= rightTimeBuffer){
-            timeTool.style.left = rightTimeBuffer+'px';
+            timeTool.style.right = rightTimeBuffer+'px';
         }
         else{
             timeTool.style.left = event.offsetX+'px';
@@ -487,6 +508,8 @@ function timeAmpTool() {
             timeTool.style.width = (rightTimeBuffer - getStyleNumber(timeTool, 'left'))+'px';
             document.getElementById('timeText').innerHTML = Math.round(getStyleNumber(timeTool, 'width')/3)+' sec';
         }
+
+        timeToolUpdate(timeTool, event, rightTimeBuffer);
     }
 }
 
@@ -701,3 +724,5 @@ function makeChart(data) {
         }
     });
 }
+document.getElementById('init').click();
+document.getElementById('gridToggle').click();
