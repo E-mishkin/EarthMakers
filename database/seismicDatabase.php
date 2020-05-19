@@ -5,6 +5,10 @@ $user = posix_getpwuid(posix_getuid());
 $userDir = $user['dir'];
 require_once ("$userDir/config.php");
 
+/**
+ * Class SeismicDatabase
+ * This class contains useful functions utilizing the database
+ */
 class SeismicDatabase
 {
     //PDO object
@@ -22,6 +26,9 @@ class SeismicDatabase
     }
 
 
+    /**
+     * @return mixed All classes and class codes listed in the database
+     */
     function getClassCodes()
     {
         $sql = "SELECT ClassCode, ClassName from Classes";
@@ -39,6 +46,9 @@ class SeismicDatabase
         return $result; // the result can contain info for admin status should it be needed.
     }
 
+    /**
+     * @return mixed Information from all students, will be used for a teacher
+     */
     function getAllStudents()
     {
         $sql = "SELECT * from Students";
