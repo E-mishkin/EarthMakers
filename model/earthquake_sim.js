@@ -230,17 +230,17 @@ function findDistance(stationX, stationY, earthquakeX, earthquakeY) {
 function getStyleNumber(element, type){
     switch (type) {
         case "top":
-            return parseInt(element.style.top.split('px')[0]);
+            return parseInt(element.css("top").split('px')[0]);
         case "left":
-            return parseInt(element.style.left.split('px')[0]);
+            return parseInt(element.css("left").split('px')[0]);
         case "right":
-            return parseInt(element.style.right.split('px')[0]);
+            return parseInt(element.css("right").split('px')[0]);
         case "bottom":
-            return parseInt(element.style.bottom.split('px')[0]);
+            return parseInt(element.css("bottom").split('px')[0]);
         case "height":
-            return parseInt(element.style.height.split('px')[0]);
+            return parseInt(element.css("height").split('px')[0]);
         case "width":
-            return parseInt(element.style.width.split('px')[0]);
+            return parseInt(element.css("width").split('px')[0]);
     }
 }
 
@@ -441,50 +441,134 @@ document.getElementById('notePadBtn').addEventListener('click', () =>{
     getFormData();
 });
 
-//Amp and time tool for the graphs
-/*document.getElementById('stationGraph').addEventListener('click', (event)=>{
-    timeAmpTool(event, "");
-});*/
+let tracker  = 0;
+let timeBtn = $( "#time" );
+let ampBtn = $("#amp");
+let graph = $("#stationGraph");
+let timeTool = $("#timeTool");
+let ampTool = $('#ampTool');
 
-let timeHandler = (event)=>{
-    timeAmpTool(event, "time");
-}
+timeBtn.tooltip({content:"Click to begin time measurement.",
+                 track:true});
+ampBtn.tooltip({content:"Click to begin amplitude measurement.",
+                track:true});
+graph.tooltip({content: "Select a Measurement Tool.",
+               track:true});
 
-let ampHandler = (event)=>{
-    timeAmpTool(event, "amp");
-}
+//Amp and time tool handlers for the graph measurements
+let ampToolHandler = (event)=>{
+    const midpoint = 129;
+    const topAmpBuffer = 17;
+    const bottomAmpBuffer = 242;
+    const ampIncrement = 12.5;
 
-document.getElementById('time').addEventListener('click', ()=>{
-   /* document.getElementById('stationGraph').removeEventListener('click', (event)=>{
-        timeAmpTool(event, "");
-    });*/
-    document.getElementById('stationGraph').removeEventListener('click', ampHandler);
-    document.getElementById('stationGraph').addEventListener('click', timeHandler);
+    if(event.offsetY < midpoint) {
+        if(event.offsetY < 18){
+            ampTool.css("top", topAmpBuffer+'px');
+            ampTool.css("height", ((midpoint+1)-topAmpBuffer)+'px');
+        }else{
+            ampTool.css("top", event.offsetY + 'px');
+            ampTool.css("height", ((midpoint+1)-event.offsetY)+'px');
+        }
+    }
+    if(event.offsetY > midpoint){
+
+        console.log('click y: '+event.offsetY);
+
+        ampTool.css("top", midpoint+'px');
+
+        if(event.offsetY > bottomAmpBuffer && getStyleNumber(ampTool, 'top') === midpoint){
+            ampTool.css("height", (bottomAmpBuffer - midpoint) +'px');
+        }else{
+            ampTool.css("height", (event.offsetY - getStyleNumber(ampTool, 'top')) + 'px');
+        }
+        console.log('current top after clicked bellow'+getStyleNumber(ampTool, 'top'));
+    }
+
+    if(getStyleNumber(ampTool, 'height') > 0){
+        if(getStyleNumber(ampTool, 'top') === midpoint){
+            document.getElementById('ampText').innerHTML = (getStyleNumber(ampTool, 'height')/-ampIncrement).toPrecision(2)+'mm';
+        }
+        else{
+            document.getElementById('ampText').innerHTML = (getStyleNumber(ampTool, 'height')/ampIncrement).toPrecision(2)+'mm';
+        }
+    }
+    //sets amp tool to the mid
+    if(isNaN(getStyleNumber(ampTool, 'height'))){
+        ampTool.css("top", midpoint+'px');
+    }
+    graph.tooltip({
+        content: "Amplitude Measured: " + document.getElementById('ampText').innerHTML
+    });
+};
+
+let timeToolHandler = (event)=>{
+    if (tracker === 0) {
+        timeTool.css("left", event.offsetX +"px");
+        graph.tooltip({content: "Select Measurement End time."});
+        tracker++;
+    } else {
+        timeTool.css("width", (event.offsetX - getStyleNumber(timeTool, "left")) + "px");
+        graph.tooltip({
+            content: "Time Measured: " + Math.round(getStyleNumber(timeTool, 'width')/3)+' sec'
+        });
+        timeBtn.tooltip({content:"Click to begin time measurement."});
+        tracker--;
+        document.getElementById('timeText').innerHTML = Math.round(getStyleNumber(timeTool, 'width')/3)+' sec';
+        graph.off("click", timeToolHandler);
+    }
+
+    /*const leftTimeBuffer = 31;
+    const rightTimeBuffer = 582;
+    if(event.offsetX <= leftTimeBuffer && event.offsetX < timeTool.style.right){
+        timeTool.style.left = leftTimeBuffer+'px';
+    }
+    else if(event.offsetX >= rightTimeBuffer && event.offsetX > timeTool.style.left) {
+        timeTool.style.right = rightTimeBuffer+'px';
+    }
+    else {
+        timeTool.style.left = event.offsetX+'px';
+    }*/
+
+    //checks of the user moves the time line with a width causing it to go outside of the parent div
+   /* if((getStyleNumber(timeTool, 'width')+getStyleNumber(timeTool, 'left')) > rightTimeBuffer){
+        timeTool.style.width = (rightTimeBuffer - getStyleNumber(timeTool, 'left'))+'px';
+        document.getElementById('timeText').innerHTML = Math.round(getStyleNumber(timeTool, 'width')/3)+' sec';
+    }
+
+    timeToolUpdate(timeTool, event, rightTimeBuffer);*/
+};
+
+timeBtn.on('click', ()=>{
+    timeTool.css("width", "0px");
+    timeTool.css("left", "0px");
+    document.getElementById('timeText').innerHTML = "0";
+    timeBtn.tooltip("option", "content", "Move mouse to graph.");
+    ampBtn.tooltip({content:"Click to begin amplitude measurement."});
+    graph.tooltip({content: "Select Measurement Start time."});
+    graph.off('click', ampToolHandler);
+    graph.on('click', timeToolHandler);
 });
 
-document.getElementById('amp').addEventListener('click', ()=>{
-
-    /*document.getElementById('stationGraph').removeEventListener('click', (event)=>{
-        timeAmpTool(event, "");
-    });*/
-    document.getElementById('stationGraph').removeEventListener('click', timeHandler);
-    document.getElementById('stationGraph').addEventListener('click', ampHandler);
+ampBtn.on('click', ()=>{
+    ampBtn.tooltip("option", "content", "Move mouse to graph.");
+    timeBtn.tooltip({content:"Click to begin time measurement."});
+    graph.tooltip({content: "Select Peak to Measure."});
+    graph.off('click', timeToolHandler);
+    graph.on('click', ampToolHandler);
 });
 
-/* TIME / AMP TOOL */
+
 
 //Time and Amp tool... its a mess... fix this asap
-function timeAmpTool(event, listener) {
-    const leftTimeBuffer = 31;
-    const rightTimeBuffer = 582;
-    const midpoint = 129;
-
-    let ampTool = document.getElementById('ampTool');
-    let timeTool = document.getElementById('timeTool');
-
+/*function timeAmpTool(event, listener) {
 
     //uses the mouse click even as well as keyboard button presses to dictate which tool is being used
     if(listener === "amp"){
+        const midpoint = 129;
+
+        let ampTool = document.getElementById('ampTool');
+
         ampToolUpdate(ampTool,event, midpoint);
         //sets amp tool to the mid
         if(isNaN(getStyleNumber(ampTool, 'height'))){
@@ -492,7 +576,10 @@ function timeAmpTool(event, listener) {
         }
     }
     else if(listener === "time"){
-        //
+        const leftTimeBuffer = 31;
+        const rightTimeBuffer = 582;
+        let timeTool = document.getElementById('timeTool');
+
         //sets time line at clicked point
         if(event.offsetX <= leftTimeBuffer){
             timeTool.style.left = leftTimeBuffer+'px';
@@ -511,44 +598,10 @@ function timeAmpTool(event, listener) {
 
         timeToolUpdate(timeTool, event, rightTimeBuffer);
     }
-}
+}*/
 
-function ampToolUpdate(ampTool, event, midpoint) {
-    const topAmpBuffer = 17;
-    const bottomAmpBuffer = 242;
-    const ampIncrement = 12.5;
+function ampToolUpdate(event, midpoint) {
 
-    if(event.layerY < midpoint) {
-        if(event.layerY < 18){
-            ampTool.style.top = topAmpBuffer+'px';
-            ampTool.style.height = ((midpoint+1)-topAmpBuffer)+'px'
-        }else{
-            ampTool.style.top = event.offsetY + 'px';
-            ampTool.style.height = ((midpoint+1)-event.offsetY)+'px'
-        }
-    }
-    if(event.layerY > midpoint){
-
-        console.log('click y: '+event.offsetY);
-
-        ampTool.style.top = midpoint+'px';
-
-        if(event.layerY > bottomAmpBuffer && getStyleNumber(ampTool, 'top') === midpoint){
-            ampTool.style.height = (bottomAmpBuffer - midpoint) +'px';
-        }else{
-            ampTool.style.height = (event.offsetY - getStyleNumber(ampTool, 'top')) + 'px';
-        }
-        console.log('current top after clicked bellow'+getStyleNumber(ampTool, 'top'));
-    }
-
-    if(getStyleNumber(ampTool, 'height') > 0){
-        if(getStyleNumber(ampTool, 'top') === midpoint){
-            document.getElementById('ampText').innerHTML = (getStyleNumber(ampTool, 'height')/-ampIncrement).toPrecision(2)+'mm';
-        }
-        else{
-            document.getElementById('ampText').innerHTML = (getStyleNumber(ampTool, 'height')/ampIncrement).toPrecision(2)+'mm';
-        }
-    }
 }
 
 function timeToolUpdate(timeTool, event, rightBuffer) {
