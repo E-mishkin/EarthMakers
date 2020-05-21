@@ -47,6 +47,14 @@ $f3->route('GET /summary', function ($f3){
       $GLOBALS['controller']->summary();
 });
 
+//Define a new class page route
+$f3->route('GET|POST /newClass', function (){
+
+//    $view = new Template();
+//    echo $view->render('controller/logout.php');
+    $GLOBALS['controller']->newClass();
+});
+
 //Define a logout route
 $f3->route('GET|POST /logout', function (){
 

@@ -52,6 +52,15 @@ class controller
     }
 
     /**
+     * new class route
+     */
+    public function newClass()
+    {
+        $view = new Template();
+        echo $view->render('views/newClassForm.html');
+    }
+
+    /**
      * logout route
      */
     public function logout()
