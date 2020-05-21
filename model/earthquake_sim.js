@@ -27,6 +27,8 @@ let ctx = document.getElementById("myChart");
 let myChart = makeChart([]);
 let selected = '';
 
+let rangeCircleDiv = $("#rangeCircleDiv");
+
 let choiceX;
 let choiceY;
 
@@ -127,12 +129,12 @@ function init() {
             document.getElementById('plotEpi').click();
         }
 
-        console.log("Choice: " + (choiceX-PADDING_COMPENSATION) +", "+ (choiceY-PADDING_COMPENSATION)-65);
+        console.log("Choice: " + (choiceX-PADDING_COMPENSATION) +", "+ (choiceY-PADDING_COMPENSATION-65));
         console.log("Actual:" + earthquake.x+", "+earthquake.y);
     });
     //plot items
     plotItems(stationPool, document.getElementById('stationsDiv'));
-    plotItems(rangeTools, document.getElementById('rangeCircleDiv'));
+    plotItems(rangeTools, document.getElementById("rangeCircleDiv"));
 
     //sets tool tips for each station
     setToolTips(stationPool);
@@ -327,8 +329,8 @@ function addSelectedEvent(elements){
 /* RANGED TOOL CONTROLS */
 
 //updates the ranged tool per station
-function setCircumference(incrementModifier) {
-    let rangeHTMLParts = document.getElementById('rangeCircleDiv').children;
+function setCircumference(event, incrementModifier) {
+    let rangeHTMLParts = rangeCircleDiv.children();
 
     let line, circle,distance;
 
@@ -358,8 +360,8 @@ function setCircumference(incrementModifier) {
             circle.style.width = selected.range+'px';
             circle.style.height = selected.range+'px';
 
-            circle.style.top = (getStyleNumber(circle, 'top') - incrementModifier[1])+'px';
-            circle.style.left = (getStyleNumber(circle, 'left') - incrementModifier[1])+'px';
+            circle.style.top = (parseInt(circle.style.top.split("px")[0]) - incrementModifier[1])+'px';
+            circle.style.left = (parseInt(circle.style.left.split("px")[0]) - incrementModifier[1])+'px';
 
             distance.innerHTML = selected.range/2 + ' km';
 
@@ -367,8 +369,6 @@ function setCircumference(incrementModifier) {
         }
     }
 }
-
-
 
 /* BUTTON AND MOUSE EVENTS */
 
@@ -381,7 +381,7 @@ document.getElementById('init').addEventListener('click', () =>{
 document.getElementById('map-pane').addEventListener('mousemove', (event) => {
     if(event.currentTarget){
         document.getElementById('pos').innerHTML = (event.clientX - PADDING_COMPENSATION)
-            + " , " + (event.clientY - PADDING_COMPENSATION);
+            + " , " + (event.clientY - PADDING_COMPENSATION-65);
     }
 
 });
@@ -394,14 +394,14 @@ document.getElementById('gridToggle').addEventListener('click', () =>{
 //creates circle measure on wheel movement
 document.addEventListener('wheel', (e) =>{
     let circumferenceModifier;//4,2,8,4
-
+console.log(e);
     if(selected !== ''){
         if(e.shiftKey){
             circumferenceModifier = [8,4];
         }else{
             circumferenceModifier = [2,1];
         }
-        setCircumference(circumferenceModifier);
+        setCircumference(e, circumferenceModifier);
     }
 });
 
@@ -419,14 +419,14 @@ document.getElementById('map-pane').addEventListener('click', (event) =>{
 
         document.getElementById('solve-for').innerHTML = '';
 
-        solver = document.createElement('div');
+        let solver = document.createElement('div');
 
         solver.id = 'solverDiv';
 
         choiceX = event.x;
         choiceY = event.y;
 
-        solver.style.top = event.y-CENTER_BUFFER+'px';
+        solver.style.top = event.y-CENTER_BUFFER-65 +'px';
         solver.style.left = event.x-CENTER_BUFFER+'px';
 
         document.getElementById('solve-for').append(solver);
@@ -448,10 +448,8 @@ let graph = $("#stationGraph");
 let timeTool = $("#timeTool");
 let ampTool = $('#ampTool');
 
-timeBtn.tooltip({content:"Click to begin time measurement.",
-                 track:true});
-ampBtn.tooltip({content:"Click to begin amplitude measurement.",
-                track:true});
+timeBtn.tooltip({content:"Click to begin time measurement."});
+ampBtn.tooltip({content:"Click to begin amplitude measurement."});
 graph.tooltip({content: "Select a Measurement Tool.",
                track:true});
 
@@ -497,22 +495,30 @@ let ampToolHandler = (event)=>{
     if(isNaN(getStyleNumber(ampTool, 'height'))){
         ampTool.css("top", midpoint+'px');
     }
-    graph.tooltip({
-        content: "Amplitude Measured: " + document.getElementById('ampText').innerHTML
-    });
+    graph.tooltip(
+        "option", "content",
+        "Amplitude Measured: " + document.getElementById('ampText').innerHTML
+    );
 };
 
 let timeToolHandler = (event)=>{
     if (tracker === 0) {
         timeTool.css("left", event.offsetX +"px");
-        graph.tooltip({content: "Select Measurement End time."});
+        graph.tooltip(
+            "option", "content",
+            "Select Measurement End time."
+        );
         tracker++;
     } else {
         timeTool.css("width", (event.offsetX - getStyleNumber(timeTool, "left")) + "px");
-        graph.tooltip({
-            content: "Time Measured: " + Math.round(getStyleNumber(timeTool, 'width')/3)+' sec'
-        });
-        timeBtn.tooltip({content:"Click to begin time measurement."});
+        graph.tooltip(
+            "option", "content",
+            "Time Measured: " + Math.round(getStyleNumber(timeTool, 'width')/3)+' sec'
+        );
+        timeBtn.tooltip(
+            "option", "content",
+            "Click to begin time measurement."
+        );
         tracker--;
         document.getElementById('timeText').innerHTML = Math.round(getStyleNumber(timeTool, 'width')/3)+' sec';
         graph.off("click", timeToolHandler);
@@ -544,16 +550,16 @@ timeBtn.on('click', ()=>{
     timeTool.css("left", "0px");
     document.getElementById('timeText').innerHTML = "0";
     timeBtn.tooltip("option", "content", "Move mouse to graph.");
-    ampBtn.tooltip({content:"Click to begin amplitude measurement."});
-    graph.tooltip({content: "Select Measurement Start time."});
+    ampBtn.tooltip("option", "content", "Click to begin amplitude measurement.");
+    graph.tooltip("option", "content", "Select Measurement Start time.");
     graph.off('click', ampToolHandler);
     graph.on('click', timeToolHandler);
 });
 
 ampBtn.on('click', ()=>{
     ampBtn.tooltip("option", "content", "Move mouse to graph.");
-    timeBtn.tooltip({content:"Click to begin time measurement."});
-    graph.tooltip({content: "Select Peak to Measure."});
+    timeBtn.tooltip("option", "content", "Click to begin time measurement.");
+    graph.tooltip("option", "content", "Select Peak to Measure.");
     graph.off('click', timeToolHandler);
     graph.on('click', ampToolHandler);
 });
@@ -777,5 +783,6 @@ function makeChart(data) {
         }
     });
 }
+
 document.getElementById('init').click();
 document.getElementById('gridToggle').click();
