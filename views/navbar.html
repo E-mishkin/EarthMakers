@@ -1,13 +1,23 @@
 <include href="views/header.html"></include>
+<include href="controller/nav.php"></include>
 
-    <!-- Navigation bar -->
-    <nav class="navNew navbar navbar-expand-lg navbar-dark bg-dark">
-
-        <!-- Logotype -->
-        <a class="navbar-brand ml-4 m-1 menu" href="http://earth-makers.greenriverdev.com/EarthMakers/">Home</a>
-        <a class="navbar-brand ml-4 m-1 menu" href="admin">Admin Login</a>
-        <a class="navbar-brand ml-4 m-1 menu" href="student">Student Login</a>
-        <include href="controller/nav.php">
-    </nav>
-
-    </html>
+<!--     Navigation bar -->
+<nav class=" navNew navbar fixed-bottom navbar-expand-lg navbar-dark bg-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="http://earth-makers.greenriverdev.com/EarthMakers/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="admin">Admin Login</a>
+            </li>
+            <!--            <li class="nav-item">-->
+            <!--                <a class="nav-link disabled" href="student">Student Login</a>-->
+            <!--            </li>-->
+        </ul>
+    </div>
+</nav>
+</html>
