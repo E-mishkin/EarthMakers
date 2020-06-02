@@ -3,13 +3,13 @@
 
 $user = posix_getpwuid(posix_getuid());
 $userDir = $user['dir'];
-require_once ("$userDir/config.php");
+require_once ("$userDir/SeismicConfig.php");
 
 /**
- * Class SeismicDatabase
+ * Class seismicDatabase
  * This class contains useful functions utilizing the database
  */
-class SeismicDatabase
+class seismicDatabase
 {
     //PDO object
     private $_dbh;
@@ -27,28 +27,30 @@ class SeismicDatabase
 
 
     /**
-     * @return mixed All classes and class codes listed in the database
+     * @param $teacherID int id of the teacher
+     * @return mixed All classes and class codes listed in the database associated with the teacher
      */
-    function getClassCodes()
+    function getClassCodes($teacherID)
     {
-        $sql = "SELECT ClassCode, ClassName from Classes";
+        $sql = "SELECT * from Classes where teacherID = :id";
 
         //2. Prepare the statement
         $statement = $this->_dbh->prepare($sql);
 
         //3. Bind the parameters
+        $statement->bindParam(':id', $teacherID);
 
         //4. Execute the statement
         $statement->execute();
 
         //5. Get the result
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         return $result; // the result can contain info for admin status should it be needed.
     }
 
     /**
-     * @return mixed Information from all students, will be used for a teacher
-     */
+ * @return mixed Information from all students, will be used for a teacher
+ */
     function getAllStudents()
     {
         $sql = "SELECT * from Students";
@@ -62,7 +64,30 @@ class SeismicDatabase
         $statement->execute();
 
         //5. Get the result
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        return $result; // the result can contain info for admin status should it be needed.
+    }
+
+
+    /**
+     * @param $classCode String code of class associated with student
+     * @return mixed Information from all students, will be used for a teacher
+     */
+    function getClassStudents($classCode)
+    {
+        $sql = "SELECT * from Students where classCode = :code";
+
+        //2. Prepare the statement
+        $statement = $this->_dbh->prepare($sql);
+
+        //3. Bind the parameters
+        $statement->bindParam(':code', $classCode);
+
+        //4. Execute the statement
+        $statement->execute();
+
+        //5. Get the result
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         return $result; // the result can contain info for admin status should it be needed.
     }
 
@@ -143,7 +168,7 @@ class SeismicDatabase
 
 
 
-    private function newTeacher($user/*, $userId*/)
+    function newTeacher($user/*, $userId*/)
     {
         $fname = $user->getFname();
         $lname = $user->getLname();
@@ -176,7 +201,7 @@ class SeismicDatabase
 
     }
 
-    private function newStudent($student)
+    function newStudent($student)
     {
 
         $class = $student->getClass();
@@ -210,23 +235,21 @@ class SeismicDatabase
 
     }
 
-    private function updateStudent($success/*, $userId*/)
+    function updateStudentSuccess($success, $userId)
     {
         //insert into user next
 
         //1. Define the query
 
-        $sql = "UPDATE `Students` SET `is_admin`= :admin WHERE StudentID = :id";
+        $sql = "UPDATE `Students` SET `success`= :success WHERE StudentID = :id";
 
         //2. Prepare the statement
         $statement = $this->_dbh->prepare($sql);
 
         //3. Bind the parameters
         //$statement->bindParam(':userId', $userId);
-        $statement->bindParam(':class', $class);
-        $statement->bindParam(':fname', $fname);
-        $statement->bindParam(':lname', $lname);
-        $statement->bindParam(':password', $password);
+        $statement->bindParam(':success', $success);
+        $statement->bindParam(':id', $userId);
 
 
         //4. Execute the statement
