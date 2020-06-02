@@ -40,7 +40,7 @@ class controller
         */
 
         // TODO: When login works, replace 0 with teacher ID
-        $classes = $this->_db->getClassCodes(0);
+        $classes = $this->_db->getClassCodes(1);
 
         var_dump($classes);
 

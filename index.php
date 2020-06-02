@@ -10,13 +10,17 @@ require_once('vendor/autoload.php');
 //Start a session
 session_start();
 
+
 //Create an instance of the base class
 $f3 = Base::instance();
+
+//Create database class
+$db = new seismicDatabase();
 
 //Turn on Fat-Free error reporting
 $f3->set('DEBUG', 3);
 
-$controller = new controller($f3);
+$controller = new controller($f3, $db);
 
 //Define a default home route
 $f3->route('GET /', function (){
