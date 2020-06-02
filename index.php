@@ -21,8 +21,15 @@ $controller = new controller($f3);
 //Define a default home route
 $f3->route('GET /', function (){
 //    $view = new Template();
-//    echo $view->render('views/home.html');
+//    echo $view->render('views/simulator.html');
       $GLOBALS['controller']->home();
+});
+
+//Define a admin login route
+$f3->route('GET|POST /simulator', function (){
+//    $view = new Template();
+//    echo $view->render('views/admin.html');
+    $GLOBALS['controller']->simulator();
 });
 
 //Define a admin login route
@@ -45,14 +52,6 @@ $f3->route('GET /summary', function ($f3){
 //    $view = new Template();
 //    echo $view->render('views/summary.html');
       $GLOBALS['controller']->summary();
-});
-
-//Define a new class page route
-$f3->route('GET|POST /newClass', function (){
-
-//    $view = new Template();
-//    echo $view->render('controller/logout.php');
-    $GLOBALS['controller']->newClass();
 });
 
 //Define a logout route
