@@ -56,7 +56,7 @@ function getRandomFloatInclusive(min, max) {
     return Number(Math.random() * (max - min) + min);
 }
 
-
+$("#map-pane").tooltip({content:"Select a station", track:true});
 
 /* OBJECTS */
 
@@ -116,6 +116,8 @@ function init() {
     document.getElementById('solveBtn').addEventListener('click', (e)=>{
         //let messageBox = document.getElementById('message');
         //let solverDiv = document.getElementById('solverDiv');
+
+        document.getElementById('map-pane').classList.toggle('mapPointer', false);
 
         if(Math.abs((choiceX-PADDING_COMPENSATION) - earthquake.x) < 13 &&
             Math.abs((choiceY-PADDING_COMPENSATION-65) - earthquake.y) < 13) {
@@ -380,8 +382,9 @@ document.getElementById('init').addEventListener('click', () =>{
 //mouse move event for current x,y on map
 document.getElementById('map-pane').addEventListener('mousemove', (event) => {
     if(event.currentTarget){
-        document.getElementById('pos').innerHTML = (event.clientX - PADDING_COMPENSATION)
-            + " , " + (event.clientY - PADDING_COMPENSATION-65);
+        document.getElementById('pos').innerHTML =
+            Math.floor(((event.clientX - PADDING_COMPENSATION-36)/80 )) - 124 + "W"+  (Math.abs((event.clientX - PADDING_COMPENSATION-36)%80)/80) + " , " +
+            (event.clientY - PADDING_COMPENSATION-65);
     }
 
 });
@@ -432,8 +435,10 @@ document.getElementById('map-pane').addEventListener('click', (event) =>{
         document.getElementById('solve-for').append(solver);
 
         solver.classList.add('solveCircleStyle');
+
+        $("#map-pane").tooltip("option", "content", "Your answer: LONG: " + (event.x-PADDING_COMPENSATION) + ", LAT: " + (event.y-PADDING_COMPENSATION-65));
     }
-    document.getElementById('map-pane').classList.toggle('mapPointer', false);
+
 });
 
 //notepad
@@ -695,6 +700,7 @@ function generateChartData(station, theEarthquake) {
     }
 
     console.log(pData);
+
     //lag time
     for (let lt = 0; lt < lagTime ; lt++){
         if(lt%2 === 0){
