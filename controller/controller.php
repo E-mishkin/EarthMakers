@@ -27,6 +27,15 @@ class controller
     }
 
     /**
+     * simulator page route
+     */
+    public function simulator()
+    {
+        $view = new Template();
+        echo $view->render('views/simulator.html');
+    }
+
+    /**
      * Admin page route
      */
     public function admin()
@@ -67,15 +76,6 @@ class controller
     {
         $view = new Template();
         echo $view->render('views/summary.html');
-    }
-
-    /**
-     * new class route
-     */
-    public function newClass()
-    {
-        $view = new Template();
-        echo $view->render('views/newClassForm.html');
     }
 
     /**
