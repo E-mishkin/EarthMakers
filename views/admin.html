@@ -24,7 +24,12 @@
         <div class="jumbotron jumbotron-fluid">
             <div class="container">
                 <div class="header text-center">
-                    <h1 class="text-uppercase">Admin Page</h1>
+                    <h1 class="text-uppercase">Welcome,
+                        <check if="{{ @_SESSION[name] }}">
+                            <true>{{ @_SESSION[name] }}</true>
+                            <false>guest</false>
+                        </check>
+                    </h1>
                 </div>
             </div>
 
@@ -50,7 +55,7 @@
             <repeat group="{{ @classes }}"
                     value="{{ @class }}">
                 <tr>
-                    <td>{{@class[classCode]}}</td>
+                    <td><a href="?classCode={{@class[classCode]}}">{{@class[classCode]}}</a></td>
                     <td>{{@class[className]}}</td>
                     <td>{{@class[teacherID]}}</td>
                 </tr>
@@ -71,7 +76,7 @@
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>First Attempt</th>
-                <th>Attenpts</th>
+                <th>Attempts</th>
                 <th>Success</th>
                 <th>Time of Success</th>
             </tr>
@@ -81,8 +86,8 @@
                     value="{{ @student }}">
                 <tr>
                     <td>{{@student[classCode]}}</td>
-                    <td>{{@student[fname]}}</td>
-                    <td>{{@student[lname]}}</td>
+                    <td>{{@student[fName]}}</td>
+                    <td>{{@student[lName]}}</td>
                     <td>{{@student[created]}}</td>
                     <td>{{@student[attempts]}}</td>
                     <td>{{@student[success]}}</td>

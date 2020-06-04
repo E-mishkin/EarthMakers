@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS `Teachers` (
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-insert into Teachers values (null, 'test', 'admin', 'test', 'test', TRUE, now());
-insert into Teachers values (null, 'test2', 'admin2', 'test2', 'test2', TRUE, now());
+insert into Teachers values (null, 'test', 'admin', 'test', md5('test'), TRUE, now());
+insert into Teachers values (null, 'test2', 'admin2', 'test2', md5('test2'), TRUE, now());
 
 
 DROP TABLE IF EXISTS Classes;

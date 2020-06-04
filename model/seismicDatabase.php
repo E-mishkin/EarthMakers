@@ -94,7 +94,7 @@ class seismicDatabase
 
     function validateTeacherLogin($username, $password)
     {
-        $sql = "SELECT UserName, Password, TeacherID, isAdmin from Teachers where UserName = :username and Password = :password";
+        $sql = "SELECT userName, password, teacherID, isAdmin from Teachers where userName = :username and password = :password";
 
         //2. Prepare the statement
         $statement = $this->_dbh->prepare($sql);
@@ -113,7 +113,7 @@ class seismicDatabase
 
     function getTeacherName($id)
     {
-        $sql = "SELECT FName, LName from Teachers where TeacherID = :id";
+        $sql = "SELECT fName, lName from Teachers where teacherID = :id";
 
         //2. Prepare the statement
         $statement = $this->_dbh->prepare($sql);
@@ -131,7 +131,7 @@ class seismicDatabase
 
     function getStudentName($id)
     {
-        $sql = "SELECT FName, LName from Students where StudentID = :id";
+        $sql = "SELECT fName, lName from Students where studentID = :id";
 
         //2. Prepare the statement
         $statement = $this->_dbh->prepare($sql);
@@ -150,7 +150,7 @@ class seismicDatabase
 
     function isAdmin($id)
     {
-        $sql = "SELECT isAdmin from Teachers where TeacherID = :id";
+        $sql = "SELECT isAdmin from Teachers where teacherID = :id";
 
         //2. Prepare the statement
         $statement = $this->_dbh->prepare($sql);
@@ -180,7 +180,7 @@ class seismicDatabase
 
         //1. Define the query
 
-        $sql = "insert into users values (null, :fname , :lname, :username, :password, false, now());";
+        $sql = "insert into Teachers values (null, :fname , :lname, :username, :password, false, now());";
 
         //2. Prepare the statement
         $statement = $this->_dbh->prepare($sql);
@@ -214,7 +214,7 @@ class seismicDatabase
 
         //1. Define the query
 
-        $sql = "insert into users values (null, :class, :fname , :lname, 0, now(), false, null);";
+        $sql = "insert into Students values (null, :class, :fname , :lname, 0, now(), false, null);";
 
         //2. Prepare the statement
         $statement = $this->_dbh->prepare($sql);

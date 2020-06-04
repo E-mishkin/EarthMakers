@@ -51,19 +51,22 @@
 
     <div class="login-block">
         <h3>Admin Login</h3>
-        <form action="#" method="post" target="_blank">
-            <p><label for="adminUser">Username</label><input type="text" name="username" id="adminUser" /></p>
-            <p><label for="adminPassword">Password</label><input type="password" name="password" id="adminPassword" /></p>
+        <form action="#" method="post">
+            <input type="hidden" name="formType" value="adminLogin">
+            <p><label for="adminUser">Username</label><input type="text" name="adminUser" id="adminUser" /></p>
+            <p><label for="adminPassword">Password</label><input type="password" name="adminPassword" id="adminPassword" /></p>
             <p class="submit-wrap"><input type="submit" id="adminSubmit" class="btn-primary" value="Login" /></p>
         </form>
     </div>
 
 
         <div class="login-block">
-            <h3>Student Login</h3>
-            <form action="#" method="post" target="_blank">
-                <p><label for="studentUser">Username</label><input type="text" name="username" id="studentUser" /></p>
-                <p><label for="studentPassword">Password</label><input type="password" name="password" id="studentPassword" /></p>
+            <h3>New Student</h3>
+            <form action="#" method="post">
+                <input type="hidden" name="formType" value="studentLogin">
+                <p><label for="studentNameFirst">First Name</label><input type="text" name="studentNameFirst" id="studentNameFirst" /></p>
+                <p><label for="studentNameLast">Last Name</label><input type="text" name="studentNameLast" id="studentNameLast" /></p>
+                <p><label for="studentPassword">Class Code</label><input type="password" name="studentCode" id="studentPassword" /></p>
                 <p class="submit-wrap"><input type="submit" id="studentSubmit" class="btn-primary" value="Login" /></p>
             </form>
         </div>
