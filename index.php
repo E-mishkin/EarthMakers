@@ -20,45 +20,36 @@ $controller = new controller($f3);
 
 //Define a default home route
 $f3->route('GET /', function (){
-//    $view = new Template();
-//    echo $view->render('views/simulator.html');
-      $GLOBALS['controller']->home();
+    $GLOBALS['controller']->home();
+});
+
+//Define a home route to work with navbar
+$f3->route('GET /EarthMakers', function (){
+    $GLOBALS['controller']->home();
 });
 
 //Define a admin login route
 $f3->route('GET|POST /simulator', function (){
-//    $view = new Template();
-//    echo $view->render('views/admin.html');
     $GLOBALS['controller']->simulator();
 });
 
 //Define a admin login route
 $f3->route('GET|POST /admin', function (){
-//    $view = new Template();
-//    echo $view->render('views/admin.html');
       $GLOBALS['controller']->admin();
 });
 
 ////Define a Student login route
 $f3->route('GET|POST /student', function (){
-//    $view = new Template();
-//    echo $view->render('views/studentLogin.php');
       $GLOBALS['controller']->student();
 });
 
 ////Define a Summary route
 $f3->route('GET /summary', function ($f3){
-
-//    $view = new Template();
-//    echo $view->render('views/summary.html');
       $GLOBALS['controller']->summary();
 });
 
 //Define a logout route
 $f3->route('GET|POST /logout', function (){
-
-//    $view = new Template();
-//    echo $view->render('controller/logout.php');
       $GLOBALS['controller']->logout();
 });
 
