@@ -379,11 +379,23 @@ document.getElementById('init').addEventListener('click', () =>{
     init();
 });
 
+let lonDegree;
+let lonMin;
+let latDegree;
+let latMin;
+
 //mouse move event for current x,y on map
 document.getElementById('map-pane').addEventListener('mousemove', (event) => {
     if(event.currentTarget){
+
+        lonDegree = Math.floor(((event.clientX - PADDING_COMPENSATION-36)/80 )) - 124;
+        lonMin = ((1-(Math.abs((event.clientX - PADDING_COMPENSATION - 36) % 80) / 80)) * 60).toFixed(2);
+
+
+
         document.getElementById('pos').innerHTML =
-            Math.floor(((event.clientX - PADDING_COMPENSATION-36)/80 )) - 124 + "W"+  (Math.abs((event.clientX - PADDING_COMPENSATION-36)%80)/80) + " , " +
+            ((lonMin === "60.00")? lonDegree - 1 : lonDegree) + "W"+
+            ((lonMin === "60.00")? "0.00" : lonMin) + " , " +
             (event.clientY - PADDING_COMPENSATION-65);
     }
 
@@ -416,7 +428,7 @@ document.getElementById('plotEpi').addEventListener('click', () =>{
 //adds the epicenter to the map and toggles the crosshairs
 document.getElementById('map-pane').addEventListener('click', (event) =>{
 
-    let CENTER_BUFFER = 28;
+    let CENTER_BUFFER = 25;
 
     if (document.getElementById('map-pane').classList.contains('mapPointer')){
 
@@ -430,13 +442,17 @@ document.getElementById('map-pane').addEventListener('click', (event) =>{
         choiceY = event.y;
 
         solver.style.top = event.y-CENTER_BUFFER-65 +'px';
-        solver.style.left = event.x-CENTER_BUFFER+'px';
+        solver.style.left = event.x-CENTER_BUFFER-5+'px';
 
         document.getElementById('solve-for').append(solver);
 
         solver.classList.add('solveCircleStyle');
 
-        $("#map-pane").tooltip("option", "content", "Your answer: LONG: " + (event.x-PADDING_COMPENSATION) + ", LAT: " + (event.y-PADDING_COMPENSATION-65));
+        //let lonDegree = Math.floor(((event.clientX - PADDING_COMPENSATION-36)/80 )) - 124;
+        //let lonMin = ((1-(Math.abs((event.clientX - PADDING_COMPENSATION - 36) % 80) / 80)) * 60).toFixed(2);
+
+        $("#map-pane").tooltip("option", "content", "Your answer: LON: " + ((lonMin === "60.00")? lonDegree - 1 : lonDegree) + "W"+
+            ((lonMin === "60.00")? "0.00" : lonMin) + ", LAT: " + (event.y-PADDING_COMPENSATION-65));
     }
 
 });
