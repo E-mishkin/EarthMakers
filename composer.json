@@ -1,9 +1,9 @@
 {
-  "name": "agrigorenko/355/EarthMakers",
+  "name": "emishkin/355/EarthMakers",
   "authors": [
     {
-      "name": "Alex Grigorenko",
-      "email": "agrigorenko@mail.greenriver.edu"
+      "name": "Evgenii Mishkin",
+      "email": "emishkin@mail.greenriver.edu"
     }
   ],
   "require": {
