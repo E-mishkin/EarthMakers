@@ -4,12 +4,12 @@
     Version:    1.0
     Green River College Seismic Simulating Earthquakes.
  */
- 
- /*
-	To whomever takes up this project I would love to know the outcome of where you take it. 
-	My email is listed above but anyone at GR Software Dev. teachers/staff has my contact info.
-	Goodluck!! 
- */
+
+/*
+   To whomever takes up this project I would love to know the outcome of where you take it.
+   My email is listed above but anyone at GR Software Dev. teachers/staff has my contact info.
+   Goodluck!!
+*/
 
 const PADDING_COMPENSATION = 15;
 const EARTHQUAKE_RANGE = 40;
@@ -26,6 +26,8 @@ const MAX_LABEL_COUNT = 184;
 let ctx = document.getElementById("myChart");
 let myChart = makeChart([]);
 let selected = '';
+
+let rangeCircleDiv = $("#rangeCircleDiv");
 
 let choiceX;
 let choiceY;
@@ -54,7 +56,7 @@ function getRandomFloatInclusive(min, max) {
     return Number(Math.random() * (max - min) + min);
 }
 
-
+$("#map-pane").tooltip({content:"Select a station", track:true});
 
 /* OBJECTS */
 
@@ -115,24 +117,26 @@ function init() {
         //let messageBox = document.getElementById('message');
         //let solverDiv = document.getElementById('solverDiv');
 
+        document.getElementById('map-pane').classList.toggle('mapPointer', false);
+
         if(Math.abs((choiceX-PADDING_COMPENSATION) - earthquake.x) < 13 &&
-            Math.abs((choiceY-PADDING_COMPENSATION) - earthquake.y) < 13) {
+            Math.abs((choiceY-PADDING_COMPENSATION-65) - earthquake.y) < 13) {
             alert("Good job!\n" +
-                "Your choice: x = " + (choiceX-PADDING_COMPENSATION) +", y = "+ (choiceY-PADDING_COMPENSATION) +"\n" +
+                "Your choice: x = " + (choiceX-PADDING_COMPENSATION) +", y = "+ (choiceY-PADDING_COMPENSATION-65) +"\n" +
                 "Actual location: x = " + earthquake.x+", y = "+earthquake.y);
         } else {
             alert("Try again!\n" +
-                "Your choice: x = " + (choiceX-PADDING_COMPENSATION) +", y = "+ (choiceY-PADDING_COMPENSATION) +"\n" +
+                "Your choice: x = " + (choiceX-PADDING_COMPENSATION) +", y = "+ (choiceY-PADDING_COMPENSATION-65) +"\n" +
                 "Actual location: x = " + earthquake.x+", y = "+earthquake.y);
             document.getElementById('plotEpi').click();
         }
 
-        console.log("Choice: " + (choiceX-PADDING_COMPENSATION) +", "+ (choiceY-PADDING_COMPENSATION));
+        console.log("Choice: " + (choiceX-PADDING_COMPENSATION) +", "+ (choiceY-PADDING_COMPENSATION-65));
         console.log("Actual:" + earthquake.x+", "+earthquake.y);
     });
     //plot items
     plotItems(stationPool, document.getElementById('stationsDiv'));
-    plotItems(rangeTools, document.getElementById('rangeCircleDiv'));
+    plotItems(rangeTools, document.getElementById("rangeCircleDiv"));
 
     //sets tool tips for each station
     setToolTips(stationPool);
@@ -230,17 +234,17 @@ function findDistance(stationX, stationY, earthquakeX, earthquakeY) {
 function getStyleNumber(element, type){
     switch (type) {
         case "top":
-            return parseInt(element.style.top.split('px')[0]);
+            return parseInt(element.css("top").split('px')[0]);
         case "left":
-            return parseInt(element.style.left.split('px')[0]);
+            return parseInt(element.css("left").split('px')[0]);
         case "right":
-            return parseInt(element.style.right.split('px')[0]);
+            return parseInt(element.css("right").split('px')[0]);
         case "bottom":
-            return parseInt(element.style.bottom.split('px')[0]);
+            return parseInt(element.css("bottom").split('px')[0]);
         case "height":
-            return parseInt(element.style.height.split('px')[0]);
+            return parseInt(element.css("height").split('px')[0]);
         case "width":
-            return parseInt(element.style.width.split('px')[0]);
+            return parseInt(element.css("width").split('px')[0]);
     }
 }
 
@@ -327,8 +331,8 @@ function addSelectedEvent(elements){
 /* RANGED TOOL CONTROLS */
 
 //updates the ranged tool per station
-function setCircumference(incrementModifier) {
-    let rangeHTMLParts = document.getElementById('rangeCircleDiv').children;
+function setCircumference(event, incrementModifier) {
+    let rangeHTMLParts = rangeCircleDiv.children();
 
     let line, circle,distance;
 
@@ -358,8 +362,8 @@ function setCircumference(incrementModifier) {
             circle.style.width = selected.range+'px';
             circle.style.height = selected.range+'px';
 
-            circle.style.top = (getStyleNumber(circle, 'top') - incrementModifier[1])+'px';
-            circle.style.left = (getStyleNumber(circle, 'left') - incrementModifier[1])+'px';
+            circle.style.top = (parseInt(circle.style.top.split("px")[0]) - incrementModifier[1])+'px';
+            circle.style.left = (parseInt(circle.style.left.split("px")[0]) - incrementModifier[1])+'px';
 
             distance.innerHTML = selected.range/2 + ' km';
 
@@ -367,8 +371,6 @@ function setCircumference(incrementModifier) {
         }
     }
 }
-
-
 
 /* BUTTON AND MOUSE EVENTS */
 
@@ -380,8 +382,9 @@ document.getElementById('init').addEventListener('click', () =>{
 //mouse move event for current x,y on map
 document.getElementById('map-pane').addEventListener('mousemove', (event) => {
     if(event.currentTarget){
-        document.getElementById('pos').innerHTML = (event.clientX - PADDING_COMPENSATION)
-            + " , " + (event.clientY - PADDING_COMPENSATION);
+        document.getElementById('pos').innerHTML =
+            Math.floor(((event.clientX - PADDING_COMPENSATION-36)/80 )) - 124 + "W"+  (Math.abs((event.clientX - PADDING_COMPENSATION-36)%80)/80) + " , " +
+            (event.clientY - PADDING_COMPENSATION-65);
     }
 
 });
@@ -394,14 +397,14 @@ document.getElementById('gridToggle').addEventListener('click', () =>{
 //creates circle measure on wheel movement
 document.addEventListener('wheel', (e) =>{
     let circumferenceModifier;//4,2,8,4
-
+console.log(e);
     if(selected !== ''){
         if(e.shiftKey){
             circumferenceModifier = [8,4];
         }else{
             circumferenceModifier = [2,1];
         }
-        setCircumference(circumferenceModifier);
+        setCircumference(e, circumferenceModifier);
     }
 });
 
@@ -419,21 +422,23 @@ document.getElementById('map-pane').addEventListener('click', (event) =>{
 
         document.getElementById('solve-for').innerHTML = '';
 
-        solver = document.createElement('div');
+        let solver = document.createElement('div');
 
         solver.id = 'solverDiv';
 
         choiceX = event.x;
         choiceY = event.y;
 
-        solver.style.top = event.y-CENTER_BUFFER+'px';
+        solver.style.top = event.y-CENTER_BUFFER-65 +'px';
         solver.style.left = event.x-CENTER_BUFFER+'px';
 
         document.getElementById('solve-for').append(solver);
 
         solver.classList.add('solveCircleStyle');
+
+        $("#map-pane").tooltip("option", "content", "Your answer: LONG: " + (event.x-PADDING_COMPENSATION) + ", LAT: " + (event.y-PADDING_COMPENSATION-65));
     }
-    document.getElementById('map-pane').classList.toggle('mapPointer', false);
+
 });
 
 //notepad
@@ -441,79 +446,44 @@ document.getElementById('notePadBtn').addEventListener('click', () =>{
     getFormData();
 });
 
-//Amp and time tool for the graphs
-document.getElementById('stationGraph').addEventListener('click', (event)=>{
-    timeAmpTool();
-});
+let tracker  = 0;
+let timeBtn = $( "#time" );
+let ampBtn = $("#amp");
+let graph = $("#stationGraph");
+let timeTool = $("#timeTool");
+let ampTool = $('#ampTool');
 
+timeBtn.tooltip({content:"Click to begin time measurement."});
+ampBtn.tooltip({content:"Click to begin amplitude measurement."});
+graph.tooltip({content: "Select a Measurement Tool.",
+               track:true});
 
-
-/* TIME / AMP TOOL */
-
-//Time and Amp tool... its a mess... fix this asap
-function timeAmpTool() {
-    const leftTimeBuffer = 31;
-    const rightTimeBuffer = 582;
+//Amp and time tool handlers for the graph measurements
+let ampToolHandler = (event)=>{
     const midpoint = 129;
-
-    let ampTool = document.getElementById('ampTool');
-    let timeTool = document.getElementById('timeTool');
-
-
-    //uses the mouse click even as well as keyboard button presses to dictate which tool is being used
-    if(event.ctrlKey){
-        ampToolUpdate(ampTool,event, midpoint);
-    }
-    else if(event.altKey){
-        timeToolUpdate(timeTool, event, rightTimeBuffer);
-    }
-    else{
-        //sets amp tool to the mid
-        if(isNaN(getStyleNumber(ampTool, 'height'))){
-            ampTool.style.top = midpoint+'px';
-        }
-        //sets time line at clicked point
-        if(event.offsetX <= leftTimeBuffer){
-            timeTool.style.left = leftTimeBuffer+'px';
-        }
-        else if(event.offsetX >= rightTimeBuffer){
-            timeTool.style.left = rightTimeBuffer+'px';
-        }
-        else{
-            timeTool.style.left = event.offsetX+'px';
-        }
-        //checks of the user moves the time line with a width causing it to go outside of the parent div
-        if((getStyleNumber(timeTool, 'width')+getStyleNumber(timeTool, 'left')) > rightTimeBuffer){
-            timeTool.style.width = (rightTimeBuffer - getStyleNumber(timeTool, 'left'))+'px';
-            document.getElementById('timeText').innerHTML = Math.round(getStyleNumber(timeTool, 'width')/3)+' sec';
-        }
-    }
-}
-
-function ampToolUpdate(ampTool, event, midpoint) {
     const topAmpBuffer = 17;
     const bottomAmpBuffer = 242;
     const ampIncrement = 12.5;
 
-    if(event.layerY < midpoint) {
-        if(event.layerY < 18){
-            ampTool.style.top = topAmpBuffer+'px';
-            ampTool.style.height = ((midpoint+1)-topAmpBuffer)+'px'
+    if(event.offsetY < midpoint) {
+        if(event.offsetY < 18){
+            ampTool.css("top", topAmpBuffer+'px');
+            ampTool.css("height", ((midpoint+1)-topAmpBuffer)+'px');
         }else{
-            ampTool.style.top = event.offsetY + 'px';
-            ampTool.style.height = ((midpoint+1)-event.offsetY)+'px'
+            ampTool.css("top", event.offsetY + 'px');
+            ampTool.css("height", ((midpoint+1)-event.offsetY)+'px');
         }
     }
-    if(event.layerY > midpoint){
+    if(event.offsetY > midpoint){
 
         console.log('click y: '+event.offsetY);
 
-        ampTool.style.top = midpoint+'px';
+        ampTool.css("top", midpoint+'px');
 
-        if(event.layerY > bottomAmpBuffer && getStyleNumber(ampTool, 'top') === midpoint){
-            ampTool.style.height = (bottomAmpBuffer - midpoint) +'px';
+        if(event.offsetY > bottomAmpBuffer && getStyleNumber(ampTool, 'top') === midpoint){
+            ampTool.css("height", (bottomAmpBuffer - midpoint) +'px');
         }else{
-            ampTool.style.height = (event.offsetY - getStyleNumber(ampTool, 'top')) + 'px';
+            ampTool.css("height", (event.offsetY - getStyleNumber(ampTool, 'top')) + 'px');
         }
         console.log('current top after clicked bellow'+getStyleNumber(ampTool, 'top'));
     }
@@ -526,6 +496,123 @@ function ampToolUpdate(ampTool, event, midpoint) {
             document.getElementById('ampText').innerHTML = (getStyleNumber(ampTool, 'height')/ampIncrement).toPrecision(2)+'mm';
         }
     }
+    //sets amp tool to the mid
+    if(isNaN(getStyleNumber(ampTool, 'height'))){
+        ampTool.css("top", midpoint+'px');
+    }
+    graph.tooltip(
+        "option", "content",
+        "Amplitude Measured: " + document.getElementById('ampText').innerHTML
+    );
+};
+
+let timeToolHandler = (event)=>{
+    if (tracker === 0) {
+        timeTool.css("left", event.offsetX +"px");
+        graph.tooltip(
+            "option", "content",
+            "Select Measurement End time."
+        );
+        tracker++;
+    } else {
+        timeTool.css("width", (event.offsetX - getStyleNumber(timeTool, "left")) + "px");
+        graph.tooltip(
+            "option", "content",
+            "Time Measured: " + Math.round(getStyleNumber(timeTool, 'width')/3)+' sec'
+        );
+        timeBtn.tooltip(
+            "option", "content",
+            "Click to begin time measurement."
+        );
+        tracker--;
+        document.getElementById('timeText').innerHTML = Math.round(getStyleNumber(timeTool, 'width')/3)+' sec';
+        graph.off("click", timeToolHandler);
+    }
+
+    /*const leftTimeBuffer = 31;
+    const rightTimeBuffer = 582;
+    if(event.offsetX <= leftTimeBuffer && event.offsetX < timeTool.style.right){
+        timeTool.style.left = leftTimeBuffer+'px';
+    }
+    else if(event.offsetX >= rightTimeBuffer && event.offsetX > timeTool.style.left) {
+        timeTool.style.right = rightTimeBuffer+'px';
+    }
+    else {
+        timeTool.style.left = event.offsetX+'px';
+    }*/
+
+    //checks of the user moves the time line with a width causing it to go outside of the parent div
+   /* if((getStyleNumber(timeTool, 'width')+getStyleNumber(timeTool, 'left')) > rightTimeBuffer){
+        timeTool.style.width = (rightTimeBuffer - getStyleNumber(timeTool, 'left'))+'px';
+        document.getElementById('timeText').innerHTML = Math.round(getStyleNumber(timeTool, 'width')/3)+' sec';
+    }
+
+    timeToolUpdate(timeTool, event, rightTimeBuffer);*/
+};
+
+timeBtn.on('click', ()=>{
+    timeTool.css("width", "0px");
+    timeTool.css("left", "0px");
+    document.getElementById('timeText').innerHTML = "0";
+    timeBtn.tooltip("option", "content", "Move mouse to graph.");
+    ampBtn.tooltip("option", "content", "Click to begin amplitude measurement.");
+    graph.tooltip("option", "content", "Select Measurement Start time.");
+    graph.off('click', ampToolHandler);
+    graph.on('click', timeToolHandler);
+});
+
+ampBtn.on('click', ()=>{
+    ampBtn.tooltip("option", "content", "Move mouse to graph.");
+    timeBtn.tooltip("option", "content", "Click to begin time measurement.");
+    graph.tooltip("option", "content", "Select Peak to Measure.");
+    graph.off('click', timeToolHandler);
+    graph.on('click', ampToolHandler);
+});
+
+
+
+//Time and Amp tool... its a mess... fix this asap
+/*function timeAmpTool(event, listener) {
+
+    //uses the mouse click even as well as keyboard button presses to dictate which tool is being used
+    if(listener === "amp"){
+        const midpoint = 129;
+
+        let ampTool = document.getElementById('ampTool');
+
+        ampToolUpdate(ampTool,event, midpoint);
+        //sets amp tool to the mid
+        if(isNaN(getStyleNumber(ampTool, 'height'))){
+            ampTool.style.top = midpoint+'px';
+        }
+    }
+    else if(listener === "time"){
+        const leftTimeBuffer = 31;
+        const rightTimeBuffer = 582;
+        let timeTool = document.getElementById('timeTool');
+
+        //sets time line at clicked point
+        if(event.offsetX <= leftTimeBuffer){
+            timeTool.style.left = leftTimeBuffer+'px';
+        }
+        else if(event.offsetX >= rightTimeBuffer){
+            timeTool.style.right = rightTimeBuffer+'px';
+        }
+        else{
+            timeTool.style.left = event.offsetX+'px';
+        }
+        //checks of the user moves the time line with a width causing it to go outside of the parent div
+        if((getStyleNumber(timeTool, 'width')+getStyleNumber(timeTool, 'left')) > rightTimeBuffer){
+            timeTool.style.width = (rightTimeBuffer - getStyleNumber(timeTool, 'left'))+'px';
+            document.getElementById('timeText').innerHTML = Math.round(getStyleNumber(timeTool, 'width')/3)+' sec';
+        }
+
+        timeToolUpdate(timeTool, event, rightTimeBuffer);
+    }
+}*/
+
+function ampToolUpdate(event, midpoint) {
+
 }
 
 function timeToolUpdate(timeTool, event, rightBuffer) {
@@ -613,6 +700,7 @@ function generateChartData(station, theEarthquake) {
     }
 
     console.log(pData);
+
     //lag time
     for (let lt = 0; lt < lagTime ; lt++){
         if(lt%2 === 0){
@@ -701,3 +789,6 @@ function makeChart(data) {
         }
     });
 }
+
+document.getElementById('init').click();
+document.getElementById('gridToggle').click();
