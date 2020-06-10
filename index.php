@@ -10,21 +10,30 @@ require_once('vendor/autoload.php');
 //Start a session
 session_start();
 
+
 //Create an instance of the base class
 $f3 = Base::instance();
+
+//Create database class
+$db = new seismicDatabase();
 
 //Turn on Fat-Free error reporting
 $f3->set('DEBUG', 3);
 
-$controller = new controller($f3);
+$controller = new controller($f3, $db);
 
 //Define a default home route
-$f3->route('GET /', function (){
+
+$f3->route('GET|POST /', function (){
+      $GLOBALS['controller']->home();
+
+//Define a home route to work with navbar
+$f3->route('GET|POST /EarthMakers', function (){
     $GLOBALS['controller']->home();
 });
 
-//Define a home route to work with navbar
-$f3->route('GET /EarthMakers', function (){
+//Define a second home route
+$f3->route('GET|POST /home', function (){
     $GLOBALS['controller']->home();
 });
 
@@ -44,9 +53,10 @@ $f3->route('GET|POST /student', function (){
 });
 
 ////Define a Summary route
-$f3->route('GET /summary', function ($f3){
+$f3->route('GET /summary', function (){
       $GLOBALS['controller']->summary();
 });
+
 
 //Define a logout route
 $f3->route('GET|POST /logout', function (){
