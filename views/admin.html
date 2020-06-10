@@ -1,30 +1,35 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Required meta tags -->
+    &lt;!&ndash; Required meta tags &ndash;&gt;
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap CSS -->
+    &lt;!&ndash; Bootstrap CSS &ndash;&gt;
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="styles/styles.css" type="text/css">
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
 
-    <!-- Google Font -->
+    &lt;!&ndash; Google Font &ndash;&gt;
     <link href="https://fonts.googleapis.com/css?family=Questrial&display=swap" rel="stylesheet">
 
     <title>Earthquake Simulator</title>
 </head>
 <body>
-<!-- title container-->
-<div>
+&lt;!&ndash; title container&ndash;&gt;
+-->
     <!-- Navigation bar -->
-    <include href="views/navbar.html">
-
+    <include href="views/navbar.html"></include>
+<div>
         <div class="jumbotron jumbotron-fluid">
             <div class="container">
                 <div class="header text-center">
-                    <h1 class="text-uppercase">Admin Login</h1>
+                    <h1 class="text-uppercase">Welcome,
+                        <check if="{{ @_SESSION[name] }}">
+                            <true>{{ @_SESSION[name] }}</true>
+                            <false>guest</false>
+                        </check>
+                    </h1>
                 </div>
             </div>
 
@@ -32,30 +37,70 @@
 </div>
 
 <div class="container">
-    <br>
-    <br>
-    <br>
-    <form method="post" action="#">
-        <include href="controller/login.php"></include>
-        <label>Username:
-            <input type="text" name="username">
-        </label><br>
 
-        <label>Password:
-            <input type="password" name="password">
-        </label><br>
 
-        <input type="submit" name="submit" value="Submit" class= "btn btn-primary">
 
-    </form>
-    <br>
-    <br>
-    <br>
-    <br>
+
+    <div id="classes" class="bg-light mb-lg-5 center-block p-lg-5 text-center">
+        <h2>Classes</h2>
+        <table id="classes-table" class="display border border-primary rounded">
+            <thead>
+            <tr>
+                <th>Class Code</th>
+                <th>Class Name</th>
+                <th>Teacher</th>
+            </tr>
+            </thead>
+            <tbody>
+            <repeat group="{{ @classes }}"
+                    value="{{ @class }}">
+                <tr>
+                    <td><a href="?classCode={{@class[classCode]}}">{{@class[classCode]}}</a></td>
+                    <td>{{@class[className]}}</td>
+                    <td>{{@class[teacherID]}}</td>
+                </tr>
+            </repeat>
+            </tbody>
+        </table><!--  end of students table-->
+    </div><!-- end of students div  -->
+
+
+
+
+    <div id="students" class="bg-light mb-lg-5 center-block p-lg-5 text-center">
+        <h2>Students</h2>
+        <table id="students-table" class="display border border-primary rounded">
+            <thead>
+            <tr>
+                <th>Class Code</th>
+                <th>Student ID</th>
+                <th>First Attempt</th>
+                <th>Attempts</th>
+                <th>Success</th>
+                <th>Time of Success</th>
+            </tr>
+            </thead>
+            <tbody>
+            <repeat group="{{ @students }}"
+                    value="{{ @student }}">
+                <tr>
+                    <td>{{@student[classCode]}}</td>
+                    <td>{{@student[studentID]}}</td>
+                    <td>{{@student[created]}}</td>
+                    <td>{{@student[attempts]}}</td>
+                    <td>{{@student[success]}}</td>
+                    <td>{{@student[timeOfSuccess]}}</td>
+                </tr>
+            </repeat>
+            </tbody>
+        </table><!--  end of students table-->
+    </div><!-- end of students div  -->
 
 </div>
 
 
+
+<script src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -67,6 +112,12 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+
+
+<script src="model/admin.js"></script>
 
 </body>
 

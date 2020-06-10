@@ -49,24 +49,21 @@
 <!--        <input type="submit" name="submit" value="Submit" class= "btn btn-primary">-->
 <!--    </form>-->
 
+
     <div class="login-block">
-        <h3>Admin Login</h3>
-        <form action="#" method="post" target="_blank">
-            <p><label for="adminUser">Username</label><input type="text" name="username" id="adminUser" /></p>
-            <p><label for="adminPassword">Password</label><input type="password" name="password" id="adminPassword" /></p>
+        <h3>Login</h3>
+        <form action="#" method="post">
+            <input type="hidden" name="formType" value="login">
+            <p><label for="user">Username</label><input type="text" name="user" id="user" /></p> 
+            <p><label for="password">Password</label><input type="password" name="password" id="password" /></p>
             <p class="submit-wrap"><input type="submit" id="adminSubmit" class="btn-primary" value="Login" /></p>
         </form>
     </div>
 
 
-        <div class="login-block">
-            <h3>Student Login</h3>
-            <form action="#" method="post" target="_blank">
-                <p><label for="studentUser">Username</label><input type="text" name="username" id="studentUser" /></p>
-                <p><label for="studentPassword">Password</label><input type="password" name="password" id="studentPassword" /></p>
-                <p class="submit-wrap"><input type="submit" id="studentSubmit" class="btn-primary" value="Login" /></p>
-            </form>
-        </div>
+
+
+
     <br>
     <br>
     <br>
