@@ -65,4 +65,5 @@ $f3->route('GET|POST /logout', function (){
 });
 
 //Run fat free
+
 $f3->run();
