@@ -111,6 +111,25 @@ class seismicDatabase
         return $result; // the result can contain info for admin status should it be needed.
     }
 
+    function validateStudentLogin($username, $password)
+    {
+        $sql = "SELECT studentID, classCode from Students where studentID = :username and classCode = :password";
+
+        //2. Prepare the statement
+        $statement = $this->_dbh->prepare($sql);
+
+        //3. Bind the parameters
+        $statement->bindParam(':username', $username);
+        $statement->bindParam(':password', $password);
+
+        //4. Execute the statement
+        $statement->execute();
+
+        //5. Get the result
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        return $result; // the result can contain info for admin status should it be needed.
+    }
+
     function getTeacherName($id)
     {
         $sql = "SELECT fName, lName from Teachers where teacherID = :id";
@@ -205,16 +224,18 @@ class seismicDatabase
     {
 
         $class = $student->getClass();
-        $fname = $student->getFname();
-        $lname = $student->getLname();
+        $id = $student->getID();
         $password = $student->getPassword();
+
+        $fname = null;
+        $lname = null;
 
 
         //insert into user next
 
         //1. Define the query
 
-        $sql = "insert into Students values (null, :class, :fname , :lname, 0, now(), false, null);";
+        $sql = "insert into Students values (:id, :class, :fname, :lname, 0, now(), false, null);";
 
         //2. Prepare the statement
         $statement = $this->_dbh->prepare($sql);
@@ -222,10 +243,13 @@ class seismicDatabase
         //3. Bind the parameters
         //$statement->bindParam(':userId', $userId);
         $statement->bindParam(':class', $class);
-        $statement->bindParam(':fname', $fname);
-        $statement->bindParam(':lname', $lname);
+        $statement->bindParam(':id', $id);
+
         $statement->bindParam(':password', $password);
 
+
+        $statement->bindParam(':fname', $fname);
+        $statement->bindParam(':fname', $lname);
 
         //4. Execute the statement
         $statement->execute();
@@ -237,11 +261,13 @@ class seismicDatabase
 
     function updateStudentSuccess($success, $userId)
     {
-        //insert into user next
+        //get student attempts
+        $attempts = $this->getAttempts($userId)['attempts'];
+
 
         //1. Define the query
 
-        $sql = "UPDATE `Students` SET `success`= :success WHERE StudentID = :id";
+        $sql = "UPDATE `Students` SET `success`= :success, `attempts`=: attempts WHERE StudentID = :id";
 
         //2. Prepare the statement
         $statement = $this->_dbh->prepare($sql);
@@ -249,8 +275,32 @@ class seismicDatabase
         //3. Bind the parameters
         //$statement->bindParam(':userId', $userId);
         $statement->bindParam(':success', $success);
+
+        $statement->bindParam(':attempts', $attempts);
         $statement->bindParam(':id', $userId);
 
+
+        //4. Execute the statement
+        $statement->execute();
+
+        //5. Get the result
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        return $result;
+
+    }
+
+    private function getAttempts($userId)
+    {
+         //1. Define the query
+
+        $sql = "SELECT attempts from Students where studentID = :id";
+
+        //2. Prepare the statement
+        $statement = $this->_dbh->prepare($sql);
+
+        //3. Bind the parameters
+        //$statement->bindParam(':userId', $userId);
+        $statement->bindParam(':id', $userId);
 
         //4. Execute the statement
         $statement->execute();

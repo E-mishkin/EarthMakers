@@ -19,7 +19,7 @@
 <!-- title container-->
 <div>
     <!-- Navigation bar -->
-    <include href="views/navbar.html">
+    <include href="views/navbar.html"></include>
 
         <div class="jumbotron jumbotron-fluid">
             <div class="container">
@@ -73,8 +73,7 @@
             <thead>
             <tr>
                 <th>Class Code</th>
-                <th>First Name</th>
-                <th>Last Name</th>
+                <th>Student ID</th>
                 <th>First Attempt</th>
                 <th>Attempts</th>
                 <th>Success</th>
@@ -86,8 +85,7 @@
                     value="{{ @student }}">
                 <tr>
                     <td>{{@student[classCode]}}</td>
-                    <td>{{@student[fName]}}</td>
-                    <td>{{@student[lName]}}</td>
+                    <td>{{@student[studentID]}}</td>
                     <td>{{@student[created]}}</td>
                     <td>{{@student[attempts]}}</td>
                     <td>{{@student[success]}}</td>

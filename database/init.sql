@@ -27,15 +27,15 @@ insert into Classes values ('test123', 'test class', 1);
 
 DROP TABLE IF EXISTS `Students`;
 CREATE TABLE IF NOT EXISTS `Students` (
-  `studentID` INT NOT NULL AUTO_INCREMENT primary key,
+  `studentID` INT(10) NOT NULL primary key,
   `classCode` VARCHAR(10) NOT NULL,
-  `fName` VARCHAR(45) NOT NULL,
-  `lName` VARCHAR(45) NOT NULL,
+  `fName` VARCHAR(45),
+  `lName` VARCHAR(45),
   `attempts` INT(10) NOT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `success` TINYINT(2) NOT NULL,
   `timeOfSuccess` datetime ON UPDATE CURRENT_TIMESTAMP
 );
 
-insert into Students values (null, 'test123', 'test', 'student', 2, now(), false, null);
-insert into Students values (null, 'test123', 'test2', 'student', 2, now(), true, now());
+insert into Students values ('123456789', 'test123', 'test', 'student1', 2, now(), false, null);
+insert into Students values ('987654321', 'test123', 'test2', 'student2', 2, now(), true, now());

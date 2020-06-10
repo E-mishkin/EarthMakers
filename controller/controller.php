@@ -23,23 +23,42 @@ class controller
     public function home()
     {
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            var_dump($_POST);
+            //var_dump($_POST);
 
-            if($_POST['formType'] == 'adminLogin'){
-                $username = $_POST['adminUser'];
-                $password= $_POST['adminPassword'];
-                $password = md5($password);
+            $adminLogin = false;
 
+            $username = $_POST['user'];
+            $password= $_POST['password'];
 
-                $id = $this->_db->validateTeacherLogin($username, $password)['teacherID'];
+            if(preg_match('/[0-9]{9}/', $username)) {  // if password is a student id number
+                $id = $this->_db->validateStudentLogin($username, $password)['studentID'];
 
-                $_SESSION['userID'] = $id;
 
                 if (!$id) { // if not validated
                     echo "no";
                 } else {
                     $_SESSION['userID'] = $id;
-                    $_SESSION['userType'] = 'admin';
+                    $_SESSION['user'] = "student";
+
+
+                    //Redirect to page 1
+                    $this->_f3->reroute('/simulator');
+                }
+
+            }
+            else{
+                $password = md5($password);
+                //echo("<pre>");
+                //echo($password);
+                //echo("</pre>");
+
+                $id = $this->_db->validateTeacherLogin($username, $password)['teacherID'];
+
+                if (!$id) { // if not validated
+                    echo "no";
+                } else {
+                    $_SESSION['userID'] = $id;
+                    $_SESSION['user'] = "teacher";
                     $name = $this->_db->getTeacherName($id);
                     $name = $name['fName'].' '.$name['lName'];
                     $_SESSION['name'] = $name;
@@ -48,8 +67,6 @@ class controller
                     $this->_f3->reroute('/admin');
                 }
 
-
-            } else if($_POST['formType'] == 'studentLogin'){
 
             }
 
@@ -81,7 +98,7 @@ class controller
         // TODO: Teacher Login gets and stores teacher's id for use in admin page
 
 
-        if (!isset($_SESSION['userID'])) { // must be logged in
+        if ($_SESSION['user'] != 'teacher') { // must be logged in
             $this->_f3->reroute('/home');
         }
 
@@ -134,9 +151,11 @@ class controller
      */
     public function logout()
     {
-        $view = new Template();
-        echo $view->render('controller/logout.php');
+        //this will wipe everything
+        $_SESSION = array();
+        session_destroy();
 
+        $this->_f3->reroute('/home');
     }
 
 
