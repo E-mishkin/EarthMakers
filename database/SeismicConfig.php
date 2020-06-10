@@ -1,5 +1,5 @@
 <?php
 
-define("DB_DSN", "mysql:dbname=emaretgr_seismic");
-define("DB_USERNAME", "emaretgr_seismic_user");
-define("DB_PASSWORD", '[]RdM1+Nz35f');
+define("DB_DSN", "mysql:dbname=earthmak_seismic");
+define("DB_USERNAME", "earthmak_user");
+define("DB_PASSWORD", 'xUHHr#)aoWHQ');
