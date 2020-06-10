@@ -3,26 +3,30 @@
     Date:       3/14/2020
     Version:    1.0
     Green River College Seismic Simulating Earthquakes.
+
+    Authors:    Robert Cox(rcox18@mail.greenriver.edu) and Team Earthmakers
+    Date:       6/9/2020
+    Version:    2.0
  */
 
 /*
    To whomever takes up this project I would love to know the outcome of where you take it.
-   My email is listed above but anyone at GR Software Dev. teachers/staff has my contact info.
+   My email is listed above but anyone at GR Software Dev. teachers/staff has our contact info.
    Goodluck!!
 */
 
 const PADDING_COMPENSATION = 15;
 const EARTHQUAKE_RANGE = 40;
-const NUMBER_OF_STATIONS = 7;
+const STATION_POS = ['62,216','150,485','443,526','539,316','483,54','221,41','238,224'];
 const MIN_MAGNITUDE = 2.5;
 const MAX_MAGNITUDE = 9.0;
 const P_WAVE_SPEED = 8;
 const S_WAVE_SPEED = 3.45;
 const MAX_EARTHQUAKE_DURATION = 25;
-const STATION_POS = ['62,216','150,485','443,526','539,316','483,54','221,41','238,224'];
 const MAX_LABEL_COUNT = 184;
 
 //globals... get rid of these at some point...
+let earthquake;
 let ctx = document.getElementById("myChart");
 let myChart = makeChart([]);
 let selected = '';
@@ -31,6 +35,12 @@ let rangeCircleDiv = $("#rangeCircleDiv");
 
 let choiceX;
 let choiceY;
+
+let earthQLonDegree;
+let earthQLonMin;
+
+let choiceLonDegree;
+let choiceLonMin;
 
 /* RANDOM GEN NUMBERS */
 
@@ -102,14 +112,18 @@ function init() {
     document.getElementById('solve-for').innerHTML = '';
 
     //create earthquake, stations, circle range tool
-    let earthquake = new Earthquake(
+    earthquake = new Earthquake(
         getRandomIntInclusive(EARTHQUAKE_RANGE) * 10,
         getRandomIntInclusive(EARTHQUAKE_RANGE) * 10,
         Number(getRandomFloatInclusive(MIN_MAGNITUDE, MAX_MAGNITUDE).toFixed(2)),
         P_WAVE_SPEED,
         S_WAVE_SPEED,
         getRandomIntInclusive(MAX_EARTHQUAKE_DURATION)+10);
-    let stationPool = createStations(NUMBER_OF_STATIONS, STATION_POS, earthquake);
+
+    earthQLonDegree = Math.floor(((earthquake.x -36)/80 )) - 124;
+    earthQLonMin = ((1-(Math.abs((earthquake.x  - 36) % 80) / 80)) * 60).toFixed(2);
+
+    let stationPool = createStations();
     let rangeTools = generateRangeToolParts(stationPool);
     console.log(earthquake);
     //solveEpicenter(earthquake);
@@ -120,18 +134,22 @@ function init() {
         document.getElementById('map-pane').classList.toggle('mapPointer', false);
 
         if(Math.abs((choiceX-PADDING_COMPENSATION) - earthquake.x) < 13 &&
-            Math.abs((choiceY-PADDING_COMPENSATION-65) - earthquake.y) < 13) {
+            Math.abs((choiceY-PADDING_COMPENSATION-62) - earthquake.y) < 13) {
             alert("Good job!\n" +
-                "Your choice: x = " + (choiceX-PADDING_COMPENSATION) +", y = "+ (choiceY-PADDING_COMPENSATION-65) +"\n" +
-                "Actual location: x = " + earthquake.x+", y = "+earthquake.y);
+                "Your choice: Lon" + ((choiceLonMin === "60.00")? choiceLonDegree - 1 : choiceLonDegree) + "\xB0"+
+                ((choiceLonMin === "60.00")? "0.00" : choiceLonMin) + "', Lat: "+ (choiceY-PADDING_COMPENSATION-62) +"\n" +
+                "Actual location: x = " + ((earthQLonMin === "60.00")? earthQLonDegree - 1 : earthQLonDegree) + "\xB0"+
+                ((earthQLonMin === "60.00")? "0.00" : earthQLonMin) + "', Lat: " +earthquake.y);
         } else {
             alert("Try again!\n" +
-                "Your choice: x = " + (choiceX-PADDING_COMPENSATION) +", y = "+ (choiceY-PADDING_COMPENSATION-65) +"\n" +
-                "Actual location: x = " + earthquake.x+", y = "+earthquake.y);
+                "Your choice: Lon" + ((choiceLonMin === "60.00")? choiceLonDegree - 1 : choiceLonDegree) + "\xB0"+
+                ((choiceLonMin === "60.00")? "0.00" : choiceLonMin) + "', Lat: "+ (choiceY-PADDING_COMPENSATION-62) +"\n" +
+                "Actual location: x = " + ((earthQLonMin === "60.00")? earthQLonDegree - 1 : earthQLonDegree) + "\xB0"+
+                ((earthQLonMin === "60.00")? "0.00" : earthQLonMin) + "', Lat: " +earthquake.y);
             document.getElementById('plotEpi').click();
         }
 
-        console.log("Choice: " + (choiceX-PADDING_COMPENSATION) +", "+ (choiceY-PADDING_COMPENSATION-65));
+        console.log("Choice: " + (choiceX-PADDING_COMPENSATION) +", "+ (choiceY-PADDING_COMPENSATION-62));
         console.log("Actual:" + earthquake.x+", "+earthquake.y);
     });
     //plot items
@@ -150,14 +168,14 @@ function init() {
 }
 
 //creates an array of station objects
-function createStations(amount, posArr, theEarthquake) {
+function createStations() {
     let arr = [];
 
-    for (let i = 0; i < amount; i++) {
+    for (let i = 0; i < STATION_POS.length; i++) {
         arr.push(new Station(
             'station' + (i + 1).toString(),
-            Number(posArr[i].split(',')[0]),
-            Number(posArr[i].split(',')[1]),
+            Number(STATION_POS[i].split(',')[0]),
+            Number(STATION_POS[i].split(',')[1]),
             'div',
             'station-style',
             0,
@@ -166,13 +184,13 @@ function createStations(amount, posArr, theEarthquake) {
         ));
 
         arr[i]['distance'] = findDistance(
-            Number(posArr[i].split(',')[0]),
-            Number(posArr[i].split(',')[1]),
-            theEarthquake.x,
-            theEarthquake.y
+            Number(STATION_POS[i].split(',')[0]),
+            Number(STATION_POS[i].split(',')[1]),
+            earthquake.x,
+            earthquake.y
         );
 
-        arr[i]['data'] = generateChartData(arr[i], theEarthquake);
+        arr[i]['data'] = generateChartData(arr[i], earthquake);
     }
     return arr;
 }
@@ -300,10 +318,15 @@ function isEmpty(obj) {
     return Object.keys(obj).length === 0;
 }
 
+
+
+
 //add selected event listener to stations
 function addSelectedEvent(elements){
     for(let i = 0; i<elements.length;i++){
         document.getElementById(elements[i].idName).addEventListener('click', ()=>{
+
+
 
             if(!isEmpty(selected)) {
                 document.getElementById(selected.idName).classList.remove('selected');
@@ -313,12 +336,16 @@ function addSelectedEvent(elements){
             }
             selected = elements[i];
 
+            let selectedLonDeg = Math.floor(((selected.x - PADDING_COMPENSATION - 36) / 80 )) - 124;
+            let selectedLonMin = ((1-(Math.abs((selected.x - PADDING_COMPENSATION - 36) % 80) / 80)) * 60).toFixed(2);
+
             document.getElementById(selected.idName).classList.add('selected');
 
             document.getElementById('stationName').innerHTML = selected.idName;
             document.getElementById('stationName').style.textTransform = 'capitalize';
-            document.getElementById('stationXPos').innerHTML = selected.x;
-            document.getElementById('stationYPos').innerHTML = selected.y;
+            document.getElementById('stationXPos').innerHTML = ((selectedLonMin === "60.00")? selectedLonDeg - 1 : selectedLonDeg) + "\xB0"+
+                ((selectedLonMin === "60.00")? "0.00" : selectedLonMin) + "'";
+            document.getElementById('stationYPos').innerHTML = ""+(selected.y-PADDING_COMPENSATION);
 
             myChart.destroy();
             myChart = makeChart(selected.data);
@@ -376,15 +403,28 @@ function setCircumference(event, incrementModifier) {
 
 //init button event to start the app
 document.getElementById('init').addEventListener('click', () =>{
-    init();
+    window.location.reload();
 });
+
+let lonDegree;
+let lonMin;
+let latDegree;
+let latMin;
 
 //mouse move event for current x,y on map
 document.getElementById('map-pane').addEventListener('mousemove', (event) => {
     if(event.currentTarget){
+
+        lonDegree = Math.floor(((event.clientX - PADDING_COMPENSATION-36)/80 )) - 124;
+        lonMin = ((1-(Math.abs((event.clientX - PADDING_COMPENSATION - 36) % 80) / 80)) * 60).toFixed(2);
+
+
+
         document.getElementById('pos').innerHTML =
-            Math.floor(((event.clientX - PADDING_COMPENSATION-36)/80 )) - 124 + "W"+  (Math.abs((event.clientX - PADDING_COMPENSATION-36)%80)/80) + " , " +
-            (event.clientY - PADDING_COMPENSATION-65);
+            "Lon: " +
+            ((lonMin === "60.00")? lonDegree - 1 : lonDegree) + "\xB0"+
+            ((lonMin === "60.00")? "0.00" : lonMin) + "', Lat: " +
+            (event.clientY - PADDING_COMPENSATION-62);
     }
 
 });
@@ -411,12 +451,13 @@ console.log(e);
 //toggle for plot epicenter button
 document.getElementById('plotEpi').addEventListener('click', () =>{
     document.getElementById('map-pane').classList.toggle('mapPointer');
+    $("#map-pane").tooltip("option", "content", "Place Epicenter");
 });
 
 //adds the epicenter to the map and toggles the crosshairs
 document.getElementById('map-pane').addEventListener('click', (event) =>{
 
-    let CENTER_BUFFER = 28;
+    let CENTER_BUFFER = 25;
 
     if (document.getElementById('map-pane').classList.contains('mapPointer')){
 
@@ -429,14 +470,23 @@ document.getElementById('map-pane').addEventListener('click', (event) =>{
         choiceX = event.x;
         choiceY = event.y;
 
-        solver.style.top = event.y-CENTER_BUFFER-65 +'px';
-        solver.style.left = event.x-CENTER_BUFFER+'px';
+        choiceLonDegree = Math.floor(((choiceX - PADDING_COMPENSATION-36)/80 )) - 124;
+        choiceLonMin = ((1-(Math.abs((choiceX - PADDING_COMPENSATION - 36) % 80) / 80)) * 60).toFixed(2);
+
+        solver.style.top = event.y-CENTER_BUFFER-62 +'px';
+        solver.style.left = event.x-CENTER_BUFFER-5+'px';
 
         document.getElementById('solve-for').append(solver);
 
         solver.classList.add('solveCircleStyle');
 
-        $("#map-pane").tooltip("option", "content", "Your answer: LONG: " + (event.x-PADDING_COMPENSATION) + ", LAT: " + (event.y-PADDING_COMPENSATION-65));
+        //let lonDegree = Math.floor(((event.clientX - PADDING_COMPENSATION-36)/80 )) - 124;
+        //let lonMin = ((1-(Math.abs((event.clientX - PADDING_COMPENSATION - 36) % 80) / 80)) * 60).toFixed(2);
+
+        $("#map-pane").tooltip("option", "content", "Your answer: LON: " +
+            ((lonMin === "60.00")? lonDegree - 1 : lonDegree) + "\xB0"+
+            ((lonMin === "60.00")? "0.00" : lonMin) + "', LAT: " +
+            (event.y-PADDING_COMPENSATION-62));
     }
 
 });
@@ -790,5 +840,5 @@ function makeChart(data) {
     });
 }
 
-document.getElementById('init').click();
+init();
 document.getElementById('gridToggle').click();
