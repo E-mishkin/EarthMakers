@@ -99,7 +99,7 @@ class controller
 
 
         if ($_SESSION['user'] != 'teacher') { // must be logged in
-            $this->_f3->reroute('/home');
+            $this->_f3->reroute('/earthMakers');
         }
 
         // TODO: When login works, replace 0 with teacher ID
