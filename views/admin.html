@@ -25,8 +25,8 @@
             <div class="container">
                 <div class="header text-center">
                     <h1 class="text-uppercase">Welcome,
-                        <check if="{{ @_SESSION[name] }}">
-                            <true>{{ @_SESSION[name] }}</true>
+                        <check if="{{ @_SESSION['name'] }}">
+                            <true>{{ @_SESSION['name'] }}</true>
                             <false>guest</false>
                         </check>
                     </h1>
