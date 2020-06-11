@@ -29,14 +29,14 @@ $f3->route('GET|POST /', function () {
 });
 
 //Define a home route to work with navbar
-$f3->route('GET|POST /EarthMakers', function (){
+$f3->route('GET|POST /earthMakers', function (){
     $GLOBALS['controller']->home();
 });
 
-//Define a second home route
+/*//Define a second home route
 $f3->route('GET|POST /home', function (){
     $GLOBALS['controller']->home();
-});
+});*/
 
 //Define a admin login route
 $f3->route('GET|POST /simulator', function (){
@@ -65,4 +65,5 @@ $f3->route('GET|POST /logout', function (){
 });
 
 //Run fat free
+
 $f3->run();
