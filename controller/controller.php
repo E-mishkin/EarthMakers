@@ -155,8 +155,6 @@ class controller
         $_SESSION = array();
         session_destroy();
 
-        $this->_f3->reroute('/home');
+        $this->_f3->reroute('/earthMakers');
     }
-
-
 }
