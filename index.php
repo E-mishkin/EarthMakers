@@ -24,8 +24,9 @@ $controller = new controller($f3, $db);
 
 //Define a default home route
 
-$f3->route('GET|POST /', function (){
-      $GLOBALS['controller']->home();
+$f3->route('GET|POST /', function () {
+    $GLOBALS['controller']->home();
+});
 
 //Define a home route to work with navbar
 $f3->route('GET|POST /EarthMakers', function (){
