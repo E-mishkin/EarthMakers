@@ -55,9 +55,9 @@
             <repeat group="{{ @classes }}"
                     value="{{ @class }}">
                 <tr>
-                    <td><a href="?classCode={{@class[classCode]}}">{{@class[classCode]}}</a></td>
-                    <td>{{@class[className]}}</td>
-                    <td>{{@class[teacherID]}}</td>
+                    <td><a href="?classCode={{@class['classCode']}}">{{@class['classCode']}}</a></td>
+                    <td>{{@class['className']}}</td>
+                    <td>{{@class['teacherID']}}</td>
                 </tr>
             </repeat>
             </tbody>
@@ -84,12 +84,12 @@
             <repeat group="{{ @students }}"
                     value="{{ @student }}">
                 <tr>
-                    <td>{{@student[classCode]}}</td>
-                    <td>{{@student[studentID]}}</td>
-                    <td>{{@student[created]}}</td>
-                    <td>{{@student[attempts]}}</td>
-                    <td>{{@student[success]}}</td>
-                    <td>{{@student[timeOfSuccess]}}</td>
+                    <td>{{@student['classCode']}}</td>
+                    <td>{{@student['studentID']}}</td>
+                    <td>{{@student['created']}}</td>
+                    <td>{{@student['attempts']}}</td>
+                    <td>{{@student['success']}}</td>
+                    <td>{{@student['timeOfSuccess']}}</td>
                 </tr>
             </repeat>
             </tbody>

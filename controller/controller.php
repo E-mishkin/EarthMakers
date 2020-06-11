@@ -162,6 +162,4 @@ class controller
 
         $this->_f3->reroute('/earthMakers');
     }
-
-
 }
