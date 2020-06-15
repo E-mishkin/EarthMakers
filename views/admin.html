@@ -24,7 +24,7 @@
     <!-- Navigation bar -->
     <include href="views/navbar.html">
 
-        <div class="jumbotron jumbotron-fluid">
+        <div class="jumbotron jumbotron-fluid" id="jumbotronEarth">
             <div class="container">
                 <div class="header text-center">
                     <h1 class="text-uppercase">Admin Login</h1>
@@ -34,27 +34,24 @@
         </div>
 </div>
 
-<div class="container">
+<div class="container mt-5">
     <br>
-    <br>
-    <br>
-    <form method="post" action="#">
-        <include href="controller/login.php"></include>
-        <label>Username:
-            <input type="text" name="username">
-        </label><br>
+    <div class="card card-signin">
+        <div class="card-body m-2">
+            <form method="post" action="#" class="form-signin">
+                <include href="controller/login.php"></include>
+                <p><label>Username:</label>
+                    <input type="text" name="username" class="form-control">
+                </label></p>
 
-        <label>Password:
-            <input type="password" name="password">
-        </label><br>
+                <p><label>Password:</label>
+                    <input type="password" name="password" class="form-control">
+                </p>
 
-        <input type="submit" name="submit" value="Submit" class= "btn btn-primary">
-
-    </form>
-    <br>
-    <br>
-    <br>
-    <br>
+                <input type="submit" name="submit" value="Submit" class= "btn btn-primary">
+            </form>
+        </div>
+    </div>
 
 </div>
 
