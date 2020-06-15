@@ -460,6 +460,7 @@ $('#init').on('click', () =>{
 let plotEpiBtnHandler = () =>{
 
     mapPane.toggleClass('mapPointer');
+    plotEpiBtn.toggleClass('btn-color btn-dark text-light');
     if (mapPane.hasClass('mapPointer')){
         mapPane.tooltip("option", "content", "Place Epicenter");
         mapPane.on("click", getChoiceHandler);
@@ -653,6 +654,10 @@ timeBtn.on('click', ()=>{
     graph.tooltip("option", "content", "Select Measurement Start time.");
     graph.off('click', ampToolHandler);
     graph.on('click', timeToolHandler);
+    timeBtn.toggleClass('btn-dark text-light', true);
+    ampBtn.toggleClass('btn-dark text-light', false);
+    timeBtn.toggleClass('btn-color', false);
+    ampBtn.toggleClass('btn-color', true);
 });
 ampBtn.on('click', ()=>{
     clearMeasureTools();
@@ -661,6 +666,10 @@ ampBtn.on('click', ()=>{
     graph.tooltip("option", "content", "Select Peak to Measure.");
     graph.off('click', timeToolHandler);
     graph.on('click', ampToolHandler);
+    timeBtn.toggleClass('btn-dark text-light', false);
+    ampBtn.toggleClass('btn-dark text-light', true);
+    timeBtn.toggleClass('btn-color', true);
+    ampBtn.toggleClass('btn-color', false);
 });
 //toggle for plot epicenter button
 plotEpiBtn.on('click', plotEpiBtnHandler);
