@@ -496,6 +496,7 @@ let solveHandler = ()=>{
         plotEpiBtn.off('click', plotEpiBtnHandler);
         plotEpiBtn.on('click', plotEpiBtnHandler);
             document.getElementById('plotEpi').click();
+        plotEpiBtn.toggleClass('btn-color btn-dark text-light');
     }
 };
 
