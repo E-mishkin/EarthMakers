@@ -22,6 +22,11 @@ class controller
      */
     public function home()
     {
+
+        if (isset($_SESSION['userID'])) { // if logged in
+            $this->_f3->reroute('/logout');
+        }
+
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             //var_dump($_POST);
 
