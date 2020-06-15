@@ -22,6 +22,11 @@ class controller
      */
     public function home()
     {
+
+        if (isset($_SESSION['userID'])) { // if logged in
+            $this->_f3->reroute('/logout');
+        }
+
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             //var_dump($_POST);
 
@@ -99,7 +104,7 @@ class controller
 
 
         if ($_SESSION['user'] != 'teacher') { // must be logged in
-            $this->_f3->reroute('/home');
+            $this->_f3->reroute('/earthMakers');
         }
 
         // TODO: When login works, replace 0 with teacher ID
