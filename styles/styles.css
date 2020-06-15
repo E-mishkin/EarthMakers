@@ -98,7 +98,7 @@ body{
     /*50px, 100% 50px,*/
     /*10px, 100% 10px;*/
     pointer-events: none;
-    background-image: url("../images/lad_long_overlay.png");
+    background-image: url("../images/latlong.png");
 }
 
 .infoTab {
@@ -161,7 +161,7 @@ input[type="number"] {
     border: solid 3px #2c882b;
     user-select: none;
     box-sizing: border-box;
-
+    overflow: hidden;
 }
 
 #map-pane{
