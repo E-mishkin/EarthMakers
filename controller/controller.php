@@ -145,7 +145,6 @@ class controller
         echo $view->render('views/summary.html');
     }
 
-
     /**
      * logout route
      */

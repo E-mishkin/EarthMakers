@@ -11,12 +11,17 @@
 
 /*
    To whomever takes up this project I would love to know the outcome of where you take it.
-   My email is listed above but anyone at GR Software Dev. teachers/staff has our contact info.
-   Goodluck!!
+   My email is listed above but anyone at GR Software Dev. teachers/staff has my contact info.
+   Goodluck!!  -Nicholas Perez
 */
 
-const PADDING_COMPENSATION = 15;
-const EARTHQUAKE_RANGE = 40;
+const X_PADDING = 15;
+const Y_PADDING = 16;
+const BORDER_WIDTH = 3;
+const NAV_BAR_HEIGHT = 58;
+const TOTAL_Y_OFFSET = NAV_BAR_HEIGHT + BORDER_WIDTH + Y_PADDING;
+const CENTER_BUFFER = 25;
+const EARTHQUAKE_RANGE = 600;
 const STATION_POS = ['62,216','150,485','443,526','539,316','483,54','221,41','238,224'];
 const MIN_MAGNITUDE = 2.5;
 const MAX_MAGNITUDE = 9.0;
@@ -25,7 +30,7 @@ const S_WAVE_SPEED = 3.45;
 const MAX_EARTHQUAKE_DURATION = 25;
 const MAX_LABEL_COUNT = 184;
 
-//globals... get rid of these at some point...
+
 let earthquake;
 let ctx = document.getElementById("myChart");
 let myChart = makeChart([]);
@@ -42,9 +47,16 @@ let earthQLonMin;
 let choiceLonDegree;
 let choiceLonMin;
 
+//TODO: calculate and set latitude values for user choice and earthquake
+let earthQLatDegree;
+let earthQLatMin;
+
+let choiceLatDegree;
+let choiceLatMin;
+
 /* RANDOM GEN NUMBERS */
 
-//generates a random number between 1 and the number passed in, numRange
+//generates a random number between 1 and numRange, inclusive
 function getRandomIntInclusive(numRange){
     return Number(Math.floor(Math.random() * numRange)+1);
 }
@@ -56,7 +68,7 @@ function getRandomIntInclusiveRange(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-//generates a random number between 0 and the number passed in, numRange
+//generates a random number between 0 and numRange, exclusive
 function getRandomFloatExclusive(numRange){
     return Number(Math.random() * numRange);
 }
@@ -66,6 +78,7 @@ function getRandomFloatInclusive(min, max) {
     return Number(Math.random() * (max - min) + min);
 }
 
+//initialize the map-pane tooltip
 $("#map-pane").tooltip({content:"Select a station", track:true});
 
 /* OBJECTS */
@@ -87,8 +100,8 @@ function Earthquake(x, y, magnitude, pWaveSpeed, sWaveSpeed, duration) {
     this.x = x;
     this.y = y;
     this.magnitude = magnitude;
-    this.pWaveSpeed = pWaveSpeed;
-    this.sWaveSpeed = sWaveSpeed;
+    /*this.pWaveSpeed = pWaveSpeed;
+    this.sWaveSpeed = sWaveSpeed;*/
     this.duration = duration;
 }
 
@@ -103,7 +116,7 @@ function RangeToolParts(idName, x, y, elementType, cssClass) {
 
 /* CORE INIT */
 
-//init function
+//initialize the tool
 function init() {
 
     //resets
@@ -113,45 +126,24 @@ function init() {
 
     //create earthquake, stations, circle range tool
     earthquake = new Earthquake(
-        getRandomIntInclusive(EARTHQUAKE_RANGE) * 10,
-        getRandomIntInclusive(EARTHQUAKE_RANGE) * 10,
+        getRandomIntInclusive(EARTHQUAKE_RANGE)+X_PADDING,
+        getRandomIntInclusive(EARTHQUAKE_RANGE) + NAV_BAR_HEIGHT,
         Number(getRandomFloatInclusive(MIN_MAGNITUDE, MAX_MAGNITUDE).toFixed(2)),
         P_WAVE_SPEED,
         S_WAVE_SPEED,
         getRandomIntInclusive(MAX_EARTHQUAKE_DURATION)+10);
 
-    earthQLonDegree = Math.floor(((earthquake.x -36)/80 )) - 124;
-    earthQLonMin = ((1-(Math.abs((earthquake.x  - 36) % 80) / 80)) * 60).toFixed(2);
+    earthQLonDegree = asLonDegree(earthquake.x);
+    earthQLonMin = asLonMin(earthquake.x);
+    earthQLatDegree = asLatDegree(earthquake.y);
+    earthQLatMin = asLatMin(earthquake.y);
+
 
     let stationPool = createStations();
     let rangeTools = generateRangeToolParts(stationPool);
     console.log(earthquake);
     //solveEpicenter(earthquake);
-    document.getElementById('solveBtn').addEventListener('click', (e)=>{
-        //let messageBox = document.getElementById('message');
-        //let solverDiv = document.getElementById('solverDiv');
 
-        document.getElementById('map-pane').classList.toggle('mapPointer', false);
-
-        if(Math.abs((choiceX-PADDING_COMPENSATION) - earthquake.x) < 13 &&
-            Math.abs((choiceY-PADDING_COMPENSATION-62) - earthquake.y) < 13) {
-            alert("Good job!\n" +
-                "Your choice: Lon" + ((choiceLonMin === "60.00")? choiceLonDegree - 1 : choiceLonDegree) + "\xB0"+
-                ((choiceLonMin === "60.00")? "0.00" : choiceLonMin) + "', Lat: "+ (choiceY-PADDING_COMPENSATION-62) +"\n" +
-                "Actual location: x = " + ((earthQLonMin === "60.00")? earthQLonDegree - 1 : earthQLonDegree) + "\xB0"+
-                ((earthQLonMin === "60.00")? "0.00" : earthQLonMin) + "', Lat: " +earthquake.y);
-        } else {
-            alert("Try again!\n" +
-                "Your choice: Lon" + ((choiceLonMin === "60.00")? choiceLonDegree - 1 : choiceLonDegree) + "\xB0"+
-                ((choiceLonMin === "60.00")? "0.00" : choiceLonMin) + "', Lat: "+ (choiceY-PADDING_COMPENSATION-62) +"\n" +
-                "Actual location: x = " + ((earthQLonMin === "60.00")? earthQLonDegree - 1 : earthQLonDegree) + "\xB0"+
-                ((earthQLonMin === "60.00")? "0.00" : earthQLonMin) + "', Lat: " +earthquake.y);
-            document.getElementById('plotEpi').click();
-        }
-
-        console.log("Choice: " + (choiceX-PADDING_COMPENSATION) +", "+ (choiceY-PADDING_COMPENSATION-62));
-        console.log("Actual:" + earthquake.x+", "+earthquake.y);
-    });
     //plot items
     plotItems(stationPool, document.getElementById('stationsDiv'));
     plotItems(rangeTools, document.getElementById("rangeCircleDiv"));
@@ -161,11 +153,19 @@ function init() {
 
     //events
     addSelectedEvent(stationPool);
-
-
-
-    // console.log(stationPool);
 }
+
+/*window.addEventListener("mousemove", (e)=>{
+    console.log("x: " + e.clientX + ", y: " +e.clientY + ", target:" + e.target.tagName);
+});*/
+window.addEventListener("click", (e)=>{
+    console.log(e.target.id);
+    console.log("Window click x:" + e.x);
+    console.log("Window click y:" + e.y);
+    console.log("Choice x: "+choiceX+ "Choice y: "+choiceY);
+    console.log("Earthquake x:" + earthquake.x +", y:"+earthquake.y);
+    console.log("Earthquake Lon:" + asLonDegree(earthquake.x) + "\xB0" +asLonMin(earthquake.x) +"', Lat:" + asLatDegree(earthquake.y) + "\xB0" +asLatMin(earthquake.y) +"'");
+});
 
 //creates an array of station objects
 function createStations() {
@@ -178,19 +178,17 @@ function createStations() {
             Number(STATION_POS[i].split(',')[1]),
             'div',
             'station-style',
-            0,
+            findDistance(
+                Number(STATION_POS[i].split(',')[0])+X_PADDING,
+                Number(STATION_POS[i].split(',')[1])+NAV_BAR_HEIGHT,
+                earthquake.x,
+                earthquake.y
+            ),
             0,
             0,
         ));
 
-        arr[i]['distance'] = findDistance(
-            Number(STATION_POS[i].split(',')[0]),
-            Number(STATION_POS[i].split(',')[1]),
-            earthquake.x,
-            earthquake.y
-        );
-
-        arr[i]['data'] = generateChartData(arr[i], earthquake);
+        arr[i]['data'] = generateChartData(arr[i]);
     }
     return arr;
 }
@@ -203,7 +201,7 @@ function generateRangeToolParts(stations) {
     let cssClasses = ['line','circle','circleSize'];
 
     for (let i = 0; i < stations.length; i++) {
-        for(let f = 0; f < nameParts.length;f++){
+        for(let f = 0; f < nameParts.length;f++) {
 
             //plus 11 and plus 12 are used to put these elements under the station
             arr.push(new RangeToolParts(
@@ -217,14 +215,6 @@ function generateRangeToolParts(stations) {
     }
     return arr;
 }
-
-//checks if the user has selected the right location for the earthquake
-function solveEpicenter(earthquake) {
-
-
-}
-
-
 
 /* HELPER FUNCTIONS */
 
@@ -267,7 +257,7 @@ function getStyleNumber(element, type){
 }
 
 //plots item/s to destination div/s
-function plotItems(elements, destination,) {
+function plotItems(elements, destination) {
 
     destination.innerHTML = '';
 
@@ -319,33 +309,45 @@ function isEmpty(obj) {
 }
 
 
-
+function clearMeasureTools() {
+    timeTool.css("width", "0px");
+    timeTool.css("left", "0px");
+    document.getElementById('timeText').innerHTML = "0 sec";
+    ampTool.css("height", "0px");
+    ampTool.css("top", "0px");
+    document.getElementById('ampText').innerHTML = "0mm";
+}
 
 //add selected event listener to stations
 function addSelectedEvent(elements){
     for(let i = 0; i<elements.length;i++){
         document.getElementById(elements[i].idName).addEventListener('click', ()=>{
 
-
+            clearMeasureTools();
+            graph.tooltip({content: "Select a Measurement Tool."});
 
             if(!isEmpty(selected)) {
                 document.getElementById(selected.idName).classList.remove('selected');
-                // selected = elements[i];
-                // document.getElementById(selected.idName).classList.add('selected');
-
             }
             selected = elements[i];
 
-            let selectedLonDeg = Math.floor(((selected.x - PADDING_COMPENSATION - 36) / 80 )) - 124;
-            let selectedLonMin = ((1-(Math.abs((selected.x - PADDING_COMPENSATION - 36) % 80) / 80)) * 60).toFixed(2);
+            //calculate selected station longitude
+            let selectedLonDeg = asLonDegree(selected.x);
+            let selectedLonMin = asLonMin(selected.x);
+            //Todo: calculate selected station latitude
+            let selectedLatDeg = asLatDegree(selected.y);
+            let selectedLatMin = asLatMin(selected.y);
 
             document.getElementById(selected.idName).classList.add('selected');
 
+            //set station labels above the graph
             document.getElementById('stationName').innerHTML = selected.idName;
             document.getElementById('stationName').style.textTransform = 'capitalize';
             document.getElementById('stationXPos').innerHTML = ((selectedLonMin === "60.00")? selectedLonDeg - 1 : selectedLonDeg) + "\xB0"+
                 ((selectedLonMin === "60.00")? "0.00" : selectedLonMin) + "'";
-            document.getElementById('stationYPos').innerHTML = ""+(selected.y-PADDING_COMPENSATION);
+            //TODO: use calculated latitudes
+            document.getElementById('stationYPos').innerHTML = selectedLatDeg + "\xB0" +
+                ((selectedLatMin === "60.00")? "0.00" : selectedLonMin) + "'";
 
             myChart.destroy();
             myChart = makeChart(selected.data);
@@ -353,18 +355,16 @@ function addSelectedEvent(elements){
     }
 }
 
-
-
 /* RANGED TOOL CONTROLS */
 
 //updates the ranged tool per station
 function setCircumference(event, incrementModifier) {
     let rangeHTMLParts = rangeCircleDiv.children();
 
-    let line, circle,distance;
+    let line, circle, distance;
 
     //change for grow and shrink
-    if(event.deltaY < 0) {
+    if(event.deltaY > 0) {
         incrementModifier[0] = 0 - incrementModifier[0];
         incrementModifier[1] = 0 - incrementModifier[1];
     }
@@ -401,32 +401,73 @@ function setCircumference(event, incrementModifier) {
 
 /* BUTTON AND MOUSE EVENTS */
 
-//init button event to start the app
+//init button event to refresh the page
 document.getElementById('init').addEventListener('click', () =>{
     window.location.reload();
 });
 
-let lonDegree;
-let lonMin;
-let latDegree;
-let latMin;
+function asLonDegree(toConvert) {
+    return Math.floor(((toConvert - X_PADDING-36 + 80)/80 )) - 125;
+}
+
+function asLonMin(toConvert) {
+    return ((1-(Math.abs((toConvert - X_PADDING - 36 + 80) % 80) / 80)) * 60).toFixed(2);
+}
+
+let latToOffset;
+let pixelGap;
+let offsetLat;
+
+function setLatOffsets(toConvert) {
+    if (toConvert <= 209) {
+        latToOffset = 12;
+        pixelGap = 120;
+        offsetLat = 50;
+    } else if (toConvert <= 327) {
+        latToOffset = 250;
+        pixelGap = 118;
+        offsetLat = 48;
+    } else if (toConvert <= 443) {
+        latToOffset = 366;
+        pixelGap = 116;
+        offsetLat = 47;
+    } else if (toConvert <= 557) {
+        latToOffset = 480;
+        pixelGap = 114;
+        offsetLat = 46;
+    } else {
+        latToOffset = 592;
+        pixelGap = 112;
+        offsetLat = 45;
+    }
+}
+
+function asLatDegree(toConvert) {
+
+    setLatOffsets(toConvert);
+
+    return Math.floor(-(toConvert - NAV_BAR_HEIGHT-Y_PADDING-BORDER_WIDTH - latToOffset + pixelGap)/ pixelGap) + offsetLat;
+}
+
+function asLatMin(toConvert) {
+    return ((1 - (((toConvert - NAV_BAR_HEIGHT-Y_PADDING-BORDER_WIDTH-latToOffset + pixelGap) % pixelGap)) / pixelGap) * 60).toFixed(2);
+}
 
 //mouse move event for current x,y on map
 document.getElementById('map-pane').addEventListener('mousemove', (event) => {
-    if(event.currentTarget){
 
-        lonDegree = Math.floor(((event.clientX - PADDING_COMPENSATION-36)/80 )) - 124;
-        lonMin = ((1-(Math.abs((event.clientX - PADDING_COMPENSATION - 36) % 80) / 80)) * 60).toFixed(2);
+    let lonDegree = asLonDegree(event.clientX);
+    let lonMin = asLonMin(event.clientX);
+    //Todo: calculate mouse latitude
+    let latDegree = asLatDegree(event.clientY);
+    let latMin = asLatMin(event.clientY);
 
-
-
-        document.getElementById('pos').innerHTML =
-            "Lon: " +
-            ((lonMin === "60.00")? lonDegree - 1 : lonDegree) + "\xB0"+
-            ((lonMin === "60.00")? "0.00" : lonMin) + "', Lat: " +
-            (event.clientY - PADDING_COMPENSATION-62);
-    }
-
+    document.getElementById('pos').innerHTML =
+        "Lon: " +
+        ((lonMin === "60.00")? lonDegree - 1 : lonDegree) + "\xB0"+
+        ((lonMin === "60.00")? "0.00" : lonMin) + "', " +
+        "Lat: " + latDegree + "\xB0" +
+        ((latMin === "60.00")? "0.00" : latMin) + "'";
 });
 
 //toggle event for map grid
@@ -448,48 +489,87 @@ console.log(e);
     }
 });
 
-//toggle for plot epicenter button
-document.getElementById('plotEpi').addEventListener('click', () =>{
+let plotEpiBtnHandler = () =>{
     document.getElementById('map-pane').classList.toggle('mapPointer');
-    $("#map-pane").tooltip("option", "content", "Place Epicenter");
-});
+    if (document.getElementById('map-pane').classList.contains('mapPointer')){
+        $("#map-pane").tooltip("option", "content", "Place Epicenter");
+        $("#map-pane").on("click", getChoiceHandler);
+    } else {
+        $("#map-pane").tooltip("option", "content", "Select Station");
+        $("#map-pane").off("click", getChoiceHandler);
+    }
+};
+
+let solveHandler = (e)=>{
+
+    document.getElementById('map-pane').classList.toggle('mapPointer', false);
+
+    //TODO: change this if/else to a modal popup and not an alert
+    if(Math.abs((choiceX) - earthquake.x) < 13 &&
+        Math.abs((choiceY) - (earthquake.y)) < 13) {
+        alert("Good job!\n" +
+            "Your choice:      Lon: " + ((choiceLonMin === "60.00")? choiceLonDegree - 1 : choiceLonDegree) + "\xB0"+
+            ((choiceLonMin === "60.00")? "0.00" : choiceLonMin) + "', Lat: "+ choiceLatDegree + "\xB0" +
+            ((choiceLatMin === "60.00")? "0.00" : choiceLatMin) + "'" +"\n" +
+            "Actual location: Lon: " + ((earthQLonMin === "60.00")? earthQLonDegree - 1 : earthQLonDegree) + "\xB0"+
+            ((earthQLonMin === "60.00")? "0.00" : earthQLonMin) + "', Lat: " + earthQLatDegree + "\xB0" +
+            ((earthQLatMin === "60.00")? "0.00" : earthQLatMin) + "'");
+
+    } else {
+        alert("Try again!\n" +
+            "Your choice:      Lon: " + ((choiceLonMin === "60.00")? choiceLonDegree - 1 : choiceLonDegree) + "\xB0"+
+            ((choiceLonMin === "60.00")? "0.00" : choiceLonMin) + "', Lat: "+ choiceLatDegree + "\xB0" +
+            ((choiceLatMin === "60.00")? "0.00" : choiceLatMin) + "'" +"\n" +
+            "Actual location: Lon: " + ((earthQLonMin === "60.00")? earthQLonDegree - 1 : earthQLonDegree) + "\xB0"+
+            ((earthQLonMin === "60.00")? "0.00" : earthQLonMin) + "', Lat: "  + earthQLatDegree + "\xB0" +
+            ((earthQLatMin === "60.00")? "0.00" : earthQLatMin) + "'");
+        $("#plotEpi").off('click', plotEpiBtnHandler);
+        $("#plotEpi").on('click', plotEpiBtnHandler);
+            document.getElementById('plotEpi').click();
+    }
+};
 
 //adds the epicenter to the map and toggles the crosshairs
-document.getElementById('map-pane').addEventListener('click', (event) =>{
+let getChoiceHandler = (event) => {
 
-    let CENTER_BUFFER = 25;
+    console.log(event);
+    $("#solveBtn").off("click", solveHandler);
+    document.getElementById('solve-for').innerHTML = '';
 
-    if (document.getElementById('map-pane').classList.contains('mapPointer')){
+    let solver = document.createElement('div');
 
-        document.getElementById('solve-for').innerHTML = '';
+    solver.id = 'solverDiv';
 
-        let solver = document.createElement('div');
+    choiceX = event.clientX;
+    choiceY = event.clientY;
 
-        solver.id = 'solverDiv';
 
-        choiceX = event.x;
-        choiceY = event.y;
+    choiceLonDegree = asLonDegree(choiceX);
+    choiceLonMin = asLonMin(choiceX);
 
-        choiceLonDegree = Math.floor(((choiceX - PADDING_COMPENSATION-36)/80 )) - 124;
-        choiceLonMin = ((1-(Math.abs((choiceX - PADDING_COMPENSATION - 36) % 80) / 80)) * 60).toFixed(2);
+    choiceLatDegree = asLatDegree(choiceY);
+    choiceLatMin = asLatMin(choiceY);
 
-        solver.style.top = event.y-CENTER_BUFFER-62 +'px';
-        solver.style.left = event.x-CENTER_BUFFER-5+'px';
+    solver.style.top = event.clientY-CENTER_BUFFER-62 +'px';
+    solver.style.left = event.clientX-CENTER_BUFFER-5+'px';
 
-        document.getElementById('solve-for').append(solver);
+    document.getElementById('solve-for').append(solver);
 
-        solver.classList.add('solveCircleStyle');
+    solver.classList.add('solveCircleStyle');
 
-        //let lonDegree = Math.floor(((event.clientX - PADDING_COMPENSATION-36)/80 )) - 124;
-        //let lonMin = ((1-(Math.abs((event.clientX - PADDING_COMPENSATION - 36) % 80) / 80)) * 60).toFixed(2);
+    $("#map-pane").tooltip("option", "content", "Your answer: LON: " +
+        ((choiceLonMin === "60.00")? choiceLonDegree - 1 : choiceLonDegree) + "\xB0"+
+        ((choiceLonMin === "60.00")? "0.00" : choiceLonMin) + "', LAT: " +
+        choiceLatDegree + "\xB0" +
+        ((choiceLatMin === "60.00")? "0.00" : choiceLatMin) + "'");
 
-        $("#map-pane").tooltip("option", "content", "Your answer: LON: " +
-            ((lonMin === "60.00")? lonDegree - 1 : lonDegree) + "\xB0"+
-            ((lonMin === "60.00")? "0.00" : lonMin) + "', LAT: " +
-            (event.y-PADDING_COMPENSATION-62));
-    }
+    $("#solveBtn").on("click", solveHandler);
 
-});
+};
+
+//toggle for plot epicenter button
+$("#plotEpi").on('click', plotEpiBtnHandler);
+
 
 //notepad
 document.getElementById('notePadBtn').addEventListener('click', () =>{
@@ -505,8 +585,7 @@ let ampTool = $('#ampTool');
 
 timeBtn.tooltip({content:"Click to begin time measurement."});
 ampBtn.tooltip({content:"Click to begin amplitude measurement."});
-graph.tooltip({content: "Select a Measurement Tool.",
-               track:true});
+graph.tooltip({content: "Select a Measurement Tool.", track:true});
 
 //Amp and time tool handlers for the graph measurements
 let ampToolHandler = (event)=>{
@@ -601,9 +680,7 @@ let timeToolHandler = (event)=>{
 };
 
 timeBtn.on('click', ()=>{
-    timeTool.css("width", "0px");
-    timeTool.css("left", "0px");
-    document.getElementById('timeText').innerHTML = "0";
+    clearMeasureTools();
     timeBtn.tooltip("option", "content", "Move mouse to graph.");
     ampBtn.tooltip("option", "content", "Click to begin amplitude measurement.");
     graph.tooltip("option", "content", "Select Measurement Start time.");
@@ -612,72 +689,13 @@ timeBtn.on('click', ()=>{
 });
 
 ampBtn.on('click', ()=>{
+    clearMeasureTools();
     ampBtn.tooltip("option", "content", "Move mouse to graph.");
     timeBtn.tooltip("option", "content", "Click to begin time measurement.");
     graph.tooltip("option", "content", "Select Peak to Measure.");
     graph.off('click', timeToolHandler);
     graph.on('click', ampToolHandler);
 });
-
-
-
-//Time and Amp tool... its a mess... fix this asap
-/*function timeAmpTool(event, listener) {
-
-    //uses the mouse click even as well as keyboard button presses to dictate which tool is being used
-    if(listener === "amp"){
-        const midpoint = 129;
-
-        let ampTool = document.getElementById('ampTool');
-
-        ampToolUpdate(ampTool,event, midpoint);
-        //sets amp tool to the mid
-        if(isNaN(getStyleNumber(ampTool, 'height'))){
-            ampTool.style.top = midpoint+'px';
-        }
-    }
-    else if(listener === "time"){
-        const leftTimeBuffer = 31;
-        const rightTimeBuffer = 582;
-        let timeTool = document.getElementById('timeTool');
-
-        //sets time line at clicked point
-        if(event.offsetX <= leftTimeBuffer){
-            timeTool.style.left = leftTimeBuffer+'px';
-        }
-        else if(event.offsetX >= rightTimeBuffer){
-            timeTool.style.right = rightTimeBuffer+'px';
-        }
-        else{
-            timeTool.style.left = event.offsetX+'px';
-        }
-        //checks of the user moves the time line with a width causing it to go outside of the parent div
-        if((getStyleNumber(timeTool, 'width')+getStyleNumber(timeTool, 'left')) > rightTimeBuffer){
-            timeTool.style.width = (rightTimeBuffer - getStyleNumber(timeTool, 'left'))+'px';
-            document.getElementById('timeText').innerHTML = Math.round(getStyleNumber(timeTool, 'width')/3)+' sec';
-        }
-
-        timeToolUpdate(timeTool, event, rightTimeBuffer);
-    }
-}*/
-
-function ampToolUpdate(event, midpoint) {
-
-}
-
-function timeToolUpdate(timeTool, event, rightBuffer) {
-    if(event.layerX > rightBuffer){
-        timeTool.style.width = rightBuffer - getStyleNumber(timeTool, 'left') +'px';
-    }else{
-        timeTool.style.width = (event.offsetX - getStyleNumber(timeTool, 'left')) + 'px';
-    }
-
-    if(getStyleNumber(timeTool, 'width') > 0){
-        document.getElementById('timeText').innerHTML = Math.round(getStyleNumber(timeTool, 'width')/3)+' sec';
-    }
-}
-
-
 
 /* CHART */
 
@@ -719,9 +737,9 @@ function bracketSort(arr) {
 }
 
 //makes the data for the charts
-function generateChartData(station, theEarthquake) {
-    let duration = Number(theEarthquake.duration);
-    let magnitude = theEarthquake.magnitude;
+function generateChartData(station) {
+    let duration = Number(earthquake.duration);
+    let magnitude = earthquake.magnitude;
 
     let dataAmount = MAX_LABEL_COUNT;
 
@@ -744,7 +762,7 @@ function generateChartData(station, theEarthquake) {
 
     //adds p wave
     let pData = alternateValue(bracketSort(taperData(duration, (magnitude/2))));
-    for(let p = 0; p<theEarthquake.duration ; p++){
+    for(let p = 0; p<earthquake.duration ; p++){
         data.push(pData[p]);
         dataAmount--;
     }
@@ -762,7 +780,7 @@ function generateChartData(station, theEarthquake) {
     }
 
     let sData = alternateValue(bracketSort(taperData(duration, magnitude)));
-    for(let s = 0; s<theEarthquake.duration ; s++){
+    for(let s = 0; s<earthquake.duration ; s++){
         data.push(sData[s]);
         dataAmount--;
     }
