@@ -400,8 +400,7 @@ function setCircumference(event, incrementModifier) {
     }
 }
 
-
-//converters for longitude and latitude
+//converters for longitude and latitude, degrees and minutes
 function asLonDegree(toConvert) {
     return Math.floor(((toConvert - X_PADDING-36 + 80)/80 )) - 125;
 }
@@ -409,6 +408,7 @@ function asLonDegree(toConvert) {
 function asLonMin(toConvert) {
     return ((1-(Math.abs((toConvert - X_PADDING - 36 + 80) % 80) / 80)) * 60).toFixed(2);
 }
+
 //helper for latitude conversion
 function setLatOffsets(toConvert) {
     if (toConvert <= 209) {
