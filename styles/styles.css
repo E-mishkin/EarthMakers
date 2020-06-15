@@ -134,8 +134,8 @@ input[type="number"] {
 
 
 .login-block {
-    float:left;
-    margin: 0 50px 10px 175px;
+    /*float:left;*/
+    margin: auto;
 
     width:260px;
     text-align: center;
