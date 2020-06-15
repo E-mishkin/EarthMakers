@@ -15,6 +15,12 @@
    Goodluck!!  -Nicholas Perez
 */
 
+/*  ISSUES, BUGS AND FURTHER CONSIDERATIONS:
+ *
+ *
+ *
+*/
+
 //CONSTANTS
 const X_PADDING = 15;
 const Y_PADDING = 16;
@@ -66,7 +72,6 @@ let earthQLonMin;
 let earthQLatDegree;
 let earthQLatMin;
 
-
 /* RANDOM GEN NUMBERS */
 
 //generates a random number between 1 and numRange, inclusive
@@ -81,6 +86,7 @@ function getRandomIntInclusiveRange(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+
 //generates a random number between 0 and numRange, exclusive
 function getRandomFloatExclusive(numRange){
     return Number(Math.random() * numRange);
@@ -90,7 +96,6 @@ function getRandomFloatExclusive(numRange){
 function getRandomFloatInclusive(min, max) {
     return Number(Math.random() * (max - min) + min);
 }
-
 
 /* OBJECTS */
 
@@ -307,7 +312,6 @@ function isEmpty(obj) {
     return Object.keys(obj).length === 0;
 }
 
-
 function clearMeasureTools() {
     timeTool.css("width", "0px");
     timeTool.css("left", "0px");
@@ -318,7 +322,8 @@ function clearMeasureTools() {
 }
 
 //add selected event listener to stations
-function addSelectedEvent(elements){
+function addSelectedEvent(elements)
+{
     for(let i = 0; i<elements.length;i++){
         document.getElementById(elements[i].idName).addEventListener('click', ()=>{
 
@@ -333,8 +338,8 @@ function addSelectedEvent(elements){
             //calculate selected station longitude
             let selectedLonDeg = asLonDegree(selected.x);
             let selectedLonMin = asLonMin(selected.x);
-            let selectedLatDeg = asLatDegree(selected.y);
-            let selectedLatMin = asLatMin(selected.y);
+            let selectedLatDeg = asLatDegree(selected.y + NAV_BAR_HEIGHT + BORDER_WIDTH);
+            let selectedLatMin = asLatMin(selected.y + NAV_BAR_HEIGHT + BORDER_WIDTH);
 
             document.getElementById(selected.idName).classList.add('selected');
 
@@ -344,7 +349,7 @@ function addSelectedEvent(elements){
             document.getElementById('stationXPos').innerHTML = ((selectedLonMin === "60.00")? selectedLonDeg - 1 : selectedLonDeg) + "\xB0"+
                 ((selectedLonMin === "60.00")? "0.00" : selectedLonMin) + "'";
             document.getElementById('stationYPos').innerHTML = selectedLatDeg + "\xB0" +
-                ((selectedLatMin === "60.00")? "0.00" : selectedLonMin) + "'";
+                ((selectedLatMin === "60.00")? "0.00" : selectedLatMin) + "'";
 
             myChart.destroy();
             myChart = makeChart(selected.data);
@@ -511,7 +516,7 @@ let getChoiceHandler = (event) => {
     //created, set, and add epicenter
     let solver = document.createElement('div');
     solver.id = 'solverDiv';
-    solver.style.top = event.clientY-CENTER_BUFFER-62 +'px';
+    solver.style.top = event.clientY-CENTER_BUFFER-63 +'px';
     solver.style.left = event.clientX-CENTER_BUFFER-5+'px';
     solver.classList.add('solveCircleStyle');
 
